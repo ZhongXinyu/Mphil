@@ -1,0 +1,21 @@
+name: GaussianProcessProject
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.10.0
+  - numpy=1.21
+  - scipy
+  - matplotlib
+  - jupyter
+  - scikit-learn
+  - pandas
+  - setuptools
+  - dm-tree
+  - tensorflow
+  - pip 
+  - pip:
+    - gpjax
+  

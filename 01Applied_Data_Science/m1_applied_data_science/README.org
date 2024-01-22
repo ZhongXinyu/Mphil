@@ -1,0 +1,79 @@
+# Applied Data Science 2023
+
+* Introduction
+
+These are the lecture notes for the second half of the course, covering supervised learning (decision trees) and unsupervised learning (dimension reduction, clustering).
+
+* Lectures
+
+Lecture 12
+
+<2023-11-08 Wed 12:00-13:00>
+
+[[file:slides/decision_trees.pdf][Decision trees]]
+
+Lecture 13
+
+<2023-11-09 Thu 10:00-11:00>
+
+[[file:slides/trees_ensembles.pdf][Trees: pruning and ensembles]]
+
+with [[file:code/reg_trees.ipynb][code]]
+
+Lecture 14
+
+<2023-11-13 Mon 11:00-12:00>
+
+[[file:slides/pca.pdf][Dimensionality reduction: PCA]]
+
+with [[file:code/pca.ipynb][code]]
+
+Lecture 15
+
+<2023-11-15 Wed 12:00-13:00>
+
+[[file:slides/non-linear_dimred.pdf][Dimensionality reduction: non-linear methods]]
+
+with [[file:code/mnist.ipynb][code]]
+
+Lecture 16
+
+<2023-11-16 Thu 10:00-11:00>
+
+[[file:slides/k-means.pdf][Clustering: k-means]]
+
+Lecture 17
+
+<2023-11-20 Mon 11:00-12:00>
+
+[[file:slides/hierarchical-clustering.pdf][Clustering: hierarchical clustering]]
+
+with [[file:code/clustering.ipynb][code]]
+
+Lecture 18
+
+<2023-11-22 Wed 12:00-13:00>
+
+[[file:slides/clustering_gmm.pdf][Clustering: GMMs and spectral clustering]]
+
+Lecture 19
+
+<2023-11-23 Thu 10:00-11:00>
+
+[[file:slides/clustering_density.pdf][Clustering: graph-based and density-based clustering]]
+
+Lecture 20
+
+<2023-11-27 Mon 11:00-12:00>
+
+[[file:slides/clustering_evaluation.pdf][Clustering evaluation, issues and outliers]]
+
+* Reading 
+
+[[https://www.statlearning.com][Introduction to Statistical Learning]] by James, Witten, Hastie, Tibshirani, Taylor.
+
+* Example classes
+
+Example class 3 is scheduled for 24th November. For Problem Set 3, please do Q4, 5, 9, 10 (optional extension Q12 - ignore BART as we didn't cover this), from Introduction to Statistical Learning with Python Section 8.4. Section 8.3 contains examples that may be helpful.
+
+Example class 4 is scheduled for 1st December. Problem set 4 is contained in the [[file:example_class/README.md][example_class]] repository.

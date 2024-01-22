@@ -1,0 +1,8 @@
+.DS_Store*
+Solutions/*
+Examples/Assessment/*
+.vscode/*
+*checkpoint*
+*__pycache__*
+*docs*
+!*Doxyfile

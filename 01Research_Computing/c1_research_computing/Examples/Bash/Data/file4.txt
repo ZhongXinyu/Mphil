@@ -1,0 +1,5 @@
+meat	24	dog
+meat	12	cat
+weed	89	fish
+berries	2	bat
+rubbish	76	fox

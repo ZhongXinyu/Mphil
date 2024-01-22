@@ -1,0 +1,5 @@
+-rw-r--r--@  1 jamesfergusson  staff   194 26 Jan  2017 MANIFEST.in
+-rw-r--r--@  1 jamesfergusson  staff  1227 26 Jan  2017 README.rst
+-rw-r--r--@  1 jamesfergusson  staff    86 26 Jan  2017 makepypi
+-rw-r--r--@  1 jamesfergusson  staff    26 26 Jan  2017 requirements.txt
+-rw-r--r--@  1 jamesfergusson  staff  5179 26 Jan  2017 setup.py

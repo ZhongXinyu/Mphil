@@ -1,0 +1,5 @@
+1	cat
+2	dog
+3	fish
+4	bat
+5	fox

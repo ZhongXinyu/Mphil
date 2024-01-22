@@ -1,0 +1,4 @@
+1	house
+1	cave
+2	stream
+3	bush

@@ -1,0 +1,1 @@
+from ISLP import load_data

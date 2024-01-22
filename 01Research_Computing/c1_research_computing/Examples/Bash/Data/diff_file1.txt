@@ -1,0 +1,10 @@
+dog
+cat
+fish
+
+hat
+coat
+scarf
+
+one
+two

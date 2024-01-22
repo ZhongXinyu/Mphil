@@ -1,0 +1,816 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{import}
+\import{../Template/}{format.tex}
+
+\newcommand{\topic}{Principle of Data Science}
+
+\begin{document}
+
+\title{\topic}
+
+\begin{titlepage}
+    \maketitle
+\end{titlepage}
+
+\tableofcontents
+
+\newpage
+\begin{abstract}
+\noindent
+Abstract of this course
+\end{abstract}
+
+\newpage
+\begin{abstract}
+\noindent
+Abstract of this course
+\end{abstract}
+
+\section{Understanding Data}
+\subsection{Visualising Data}
+\subsubsection{Histograms}
+\subsubsection{Scatter Plots}
+\subsection{Measuring the moments}
+\subsubsection{Average}
+$$
+\bar{x}=\frac{1}{N} \sum_{i=1}^N x_i
+$$
+\subsubsection{Variance}
+$$
+\sigma^2=\frac{1}{N} \sum_{i=1}^N\left(x_i-\bar{x}\right)^2
+$$
+\subsubsection{Higher Moments}
+$n$th central moments
+$$
+\mu_n=\frac{1}{N} \sum_{i=1}^N\left(x_i-\bar{x}\right)^n
+$$
+$n$th algebraic moments
+$$
+\alpha_n=\frac{1}{N} \sum_{i=1}^N x_i^n
+$$
+\subsection{Covariance and Correlation}
+\begin{definition}
+    {Covariance}
+    {V_{x y}={cov}(x, y) =\overline{x y}-\bar{x} \bar{y}
+    =\frac{1}{N} \sum_i^N\left(x_i-\bar{x}\right)\left(y_i-\bar{y}\right)}
+    {Highly positive covariance means that one variance tends high when the other high, 
+    whereas a highly negative covariance means that one variable tends low while the other tends high. 
+    A low magnitude of absolute covariance indicates that two variable are more independent of each other.}
+\end{definition}
+
+\begin{definition}
+    {Covariance Matrix}
+    {\boldsymbol{V}=E\left[(\vec{X}-\vec{\mu})(\vec{X}-\vec{\mu})^{\mathrm{T}}\right]=\left[\begin{array}{cccc}\sigma_1^2 & \rho_{12} \sigma_1 \sigma_2 & \ldots & \rho_{1 n} \sigma_1 \sigma_n \\ \rho_{12} \sigma_1 \sigma_2 & \sigma_2^2 & \ldots & \vdots \\ \vdots & \vdots & \vdots & \vdots \\ \rho_{1 k} \sigma_1 \sigma_n & \ldots & \ldots & \sigma_n^2\end{array}\right]}{}
+\end{definition}
+\begin{definition}
+    {Correlation}
+    {\rho(x, y)=\frac{\operatorname{cov}(x, y)}{\sigma_x \sigma_y}=\frac{\overline{x y}-\bar{x} \bar{y}}{\sigma_x \sigma_y}}
+    {Correlation is just covariance normalised by the standard deviation product. It is also known as $R$, where $R^2$ is the coefficient of determination.}
+\end{definition}
+\subsection{Learning from Data}
+\subsubsection{Typical Structure of Data}
+Common data structure include NumPy array or Pandas dataframes. \\
+Note that we have \textit{features} and \textit{events} for a set of data. In pandas, the features correspond to columns whereas event correspond to rows.
+\subsubsection{Exploiting correlation in data}
+See Machine Learning for more information.
+
+- Recall: true positive rate. Sometimes also called signal efficiency or sensitivity. The fraction of all positive or signal events that are correctly classified:
+$$
+T P R=\frac{T P}{T P+F N} .
+$$
+- Specificity: true negative rate. Sometimes also called background efficiency. The fraction of all negative or background events that are correctly classified:
+$$
+T N R=\frac{T N}{T N+F P} .
+$$
+- False positive rate. The fraction of all negative or background events that incorrectly classified:
+$$
+F P R=\frac{F P}{F P+T N} .
+$$
+- False negative rate. The fraction of all positive or signal events that incorrectly classified:
+$$
+F N R=\frac{F N}{F N+T P}
+$$
+- Note the relationships between TPR and FNR, as well as TNR and FPR:
+$$
+\begin{aligned}
+& T P R+F N R=\frac{T P}{T P+F N}+\frac{F N}{F N+T P}=\frac{T P+F N}{T P+F N}=1, \\
+& T N R+F P R=\frac{T N}{T N+F P}+\frac{F N}{F P+T N}=\frac{T N+F P}{T N+F P}=1,
+\end{aligned}
+$$
+so that $F P R=1-T N R, F N R=1-T P R$.
+
+\subsubsection{Performance criteria and metrics}
+\begin{itemize}
+    \item True positive (TP). Correct prediction of positive or signal outcome.
+    \item False positive (FP). Incorrect prediction of positive or signal outcome.
+    \item True negative (TN). Correct prediction of negative or background outcome.
+    \item False negative (FN). Incorrect prediction of negative or background outcome.
+    \item All positive or signal events are given by $P=T P+F N$.
+    \item All negative or background events are given by $N=T N+F P$.
+    \item All events classified as positive or signal-like are given by $C_P=T P+F P$.
+    \item All events classified as negative or signal-like are given by $C_N=T N+F N$.
+    \item Recall(or signal efficiency in particle physics): true positive rate. Sometimes also called signal efficiency or sensitivity. The fraction of all positive or signal events that are correctly classified:
+    $$
+    T P R=\frac{T P}{T P+F N} .
+    $$
+    \item Specificity(or ): true negative rate. Sometimes also called background efficiency. The fraction of all negative or background events that are correctly classified:
+    $$
+    T N R=\frac{T N}{T N+F P} .
+    $$
+    
+    \item False positive rate. The fraction of all negative or background events that incorrectly classified:
+    $$
+    F P R=\frac{F P}{F P+T N} .
+    $$
+    \item False negative rate. The fraction of all positive or signal events that incorrectly classified:
+    $$
+    F N R=\frac{F N}{F N+T P}
+    $$
+    \item Note the relationships between TPR and FNR, as well as TNR and FPR:
+    $$
+    \begin{aligned}
+    & T P R+F N R=\frac{T P}{T P+F N}+\frac{F N}{F N+T P}=\frac{T P+F N}{T P+F N}=1, \\
+    & T N R+F P R=\frac{T N}{T N+F P}+\frac{F N}{F P+T N}=\frac{T N+F P}{T N+F P}=1,
+    \end{aligned}
+    $$
+    \item Accuracy. The fraction of all events that correctly classified:
+    $$
+    \alpha=\frac{T P+T N}{P+N} .
+    $$
+    \item Error rate. The fraction of all events that are incorrectly classified:
+    $$
+    \varepsilon=\frac{F P+F N}{P+N} .
+    $$
+    \item Purity. The fraction of all events classified positively that are correctly classified:
+    $$
+    \rho_P=\frac{T P}{T P+F P} \quad \text { and } \quad \rho_N=\frac{T N}{T N+F N} .
+    $$
+    \item Significance. For a counting experiment quantifies the statistical significance:
+    $$
+    \sigma=\frac{T P}{\sqrt{T P+F P}} .
+    $$
+    \item Signal-to-noise, sometimes also called signal-to-background ratio:
+    $$
+    S N R=\frac{T P}{F P} .
+    $$
+    \item F-score, sometimes also called F-measure:
+    $$
+    F=2 \frac{\text { precision } \times \text { recall }}{\text { precisoin }+ \text { recall }}=\frac{2 T P R}{2 T P R+F P R+F N R} .
+    $$
+\end{itemize}
+
+Concepts of Type I and Type II errors.\\
+Usually, one algorithm will prioritise one thing at the cost of the other, for example maximise TPR will results in a high FPR as well.\\
+A good metric to optimise is ROC (receiver-operating-characteristic), which is the curve in FPR vs TPF graph, and we would like to push the curve to the top left.
+\subsubsection{Data challeneges}
+
+
+\section{Probability}
+\subsection{Definition of Probability}
+    \subsubsection{Frequentist}
+        \begin{itemize}
+            \item The true probability in practise is never obtainable (because we cannot perform infinite experiments). We can only estimate the probability given the sample size we have. However, it is always possible to perform more experiments than we can keep doing so until we reach the desired accuracy (and any accuracy is in principle achievable).
+            \item Frequentist probability can only be applied to repeatable experiments. For example, I cannot use it to determine the probability it will rain the day after tomorrow. I need a system in which I can keep relevant conditions stable to perform repeatable experiments.
+            \item One does not need to have any prior beliefs about outcomes, the probability is purely determined from observations.
+        \end{itemize}
+    \subsubsection{Bayesian}
+
+    \begin{itemize}
+        \item The true probability is always obtainable (because we can always update our beliefs given new information). However, in practise we may not have enough information to determine the true probability.
+        \item Finetti's coherent bet:If you are willing to bet on the outcome of a random experiment, then you should be willing to bet on the outcome of any exchangeable random experiment.
+        \item Bayesian takes into account the prior belief of the outcome, and update the probability based on the new information.
+    \end{itemize}
+
+
+\subsection{Property of Probability}
+    Property of probability is based on Kolmogorov's axioms
+    \begin{itemize}
+        \item Addition
+        \item Conditional Probability
+        \item Independence
+            A and B are independent if P(A, B) = P(A)P(B)
+
+    \end{itemize}
+    \subsubsection{Monty Hall Problem}
+    Check Example Sheet 1
+
+\subsection{Probability mass/density Function}
+\begin{itemize}
+    \item $P(X)$ to denote probability mass function (discrete probability)
+    \item $p(X)$ to denote probability density function (continuous probability)
+\end{itemize}
+    
+
+
+\subsection{Change of variables}
+    We use 
+    $$X \sim f(x)$$
+    to denotes that X is distributed like f(x)
+    $$y = h(x)$$
+    to denotes that y is a function of X
+    To change variables, probability must be conserved. We use CDF to change variables.
+
+\subsubsection{Jacobian Matrix}
+    Jacobian Matrix is the matrix of all first-order partial derivatives of a vector-valued function. It is used to transform the probability density function from one set of variables to another.
+
+\subsubsection{The cumulative distribution}
+
+\begin{definition}
+    {Cumulative distribution function}
+    {F(X)=\int_{-\infty}^X f\left(X^{\prime}\right) d X^{\prime}}
+    {which is the integrated p.d.f.}
+\end{definition}\\
+It is defined so that
+$$
+\begin{aligned}
+& F\left(X_{\min }\right)=0, \\
+& F\left(X_{\max }\right)=1,
+\end{aligned}
+$$
+
+with some very useful properties
+$$
+\begin{aligned}
+& P\left(X<X^{\prime}\right)=\int_{X_{\min }}^{X^{\prime}} f(X) d X=F\left(X^{\prime}\right), \\
+& P\left(X^{\prime}<X<X^{\prime \prime}\right)=\int_{X^{\prime}}^{X^{\prime \prime}} f(X) d X=F\left(X^{\prime \prime}\right)-F(X) .
+\end{aligned}
+$$
+
+The integral of p.d.f is the difference in c.d.f.\\
+The c.d.f of a Gaussain distribution is mapped to $Chi^2$ distribution.
+\subsubsection{The Joint, Marginal and conditional distribution}
+
+\begin{definition}
+    {Joint Probability}
+    {f(X, Y)=g(X) h(Y)}
+    {}
+\end{definition}
+\begin{definition}
+    {Marginal Distribution}
+    {g(X)=\int f(X, Y) d Y \text{ the marginal distribution in }X\\ 
+     h(Y)=\int f(X, Y) d X \text{ the marginal distribution in }Y.}
+    {}
+\end{definition}
+\begin{definition}
+    {Conditional distribution}
+    {g(X \mid Y)=\frac{f(X, Y)}{h(Y)}=\frac{f(X, Y)}{\int f(X, Y) d X} the probability of X given Y,\\
+    h(Y \mid X)=\frac{f(X, Y)}{g(X)}=\frac{f(X, Y)}{\int f(X, Y) d Y} the probability of Y given X.}
+    {}
+\end{definition}
+\subsubsection{Bayes' theorem for continuous variables}
+\begin{definition}
+    {Bayes' theorem}
+    {p(\theta \mid X)=\frac{p(X \mid \theta) p(\theta)}{p(X)}=\frac{p(X \mid \theta) p(\theta)}{\int p(X \mid \theta) p(\theta) d \theta}}
+    {The terms in the equation
+    \begin{itemize}
+        \item $p(\theta \mid X)$ - the \textit{posterior distribution} - our probability distribution for the parameter $\theta$ given the data we have observed $X$.
+        50
+        \item $p(X \mid \theta)$ - the \textit{likelihood function} - the likelihood we observe the data $X$ given a particular value of $\theta$. This is of vital importance across all of statistics and machine learning. We will discuss the likelihood in much more detail in Sec. 3.2.
+        \item $p(\theta)$ - the \textit{prior distribution} - encompassing our prior beliefs about $\theta$, this can be based on previous measurements, previous beliefs or indeed be flat (although note that a change of variables or basis will not necessarily maintain flatness). The prior influences the outcome of Bayesian inference, which can be seen as an advatange and a disadvantage. I will leave discussion of priors to the other stats course.
+        \item $p(X)$ - the \textit{evidence} - this is just a normalisation factor that ensures the posterior is a p.d.f. For Bayesian inference the evidence can often be ignored as the posterior is proportional to the numerator. However, the evidence can be quite a useful quantity for goodness of fit tests. I will leave discussion of the evidence to the other stats course.
+    \end{itemize}.
+    }
+\end{definition}
+\subsection{Properties of Distributions}
+\subsubsection{Expectation, mean and variance}
+\begin{definition}
+    {Expectation}
+    {E[g(X)]=\int g(X) f(X) d X}
+    {where $f(x)$ is the probability density function of $X$ and $g(x)$ is a function of $X$
+    Expectation is a linear operator, is the true mean of the distribution}
+\end{definition}\\
+
+\begin{definition}
+    {Variance}
+    {
+    V(x)=\sigma^2 &=E\left[(X-\mu)^2\right] \\
+    &=E\left[X^2-2 \mu X+\mu^2\right] \\
+    &=E\left[X^2\right]-\mu^2 \\
+    &=\sigma^2
+    }
+    {}
+\end{definition}\\
+We can also define the moments of the distribution using expectation values. The moments are defined as
+$$
+\begin{array}{ll}
+\mu_{\ell}=E\left[X^{\ell}\right] & \text { the } \ell^{\text {th }} \text { algebraic moment } \\
+\alpha_{\ell}=E\left[(X-E[X])^{\ell}\right] & \text { the } \ell^{\text {th }} \text { moment about the mean. }
+\end{array}
+$$
+In our notation the mean is $\mu=\mu_1$ and the variance is $\sigma^2=\alpha_2$. The skew is $\gamma_1=\sqrt{\beta_1}=$ $\mu_3 / \mu_2^{3 / 2}$. The kurtosis is $\gamma_2=\beta_2-3=\mu_4 / \mu_2^2-3$.
+\subsubsection{Covariance and Correlation}
+We can also define the covariance between two random variables $X$ and $Y$,
+$$
+V(X, Y)=E\left[\left(X-\mu_X\right)\left(Y-\mu_Y\right)\right]=E[X Y]-E[X] E[Y],
+$$
+and then the correlation
+$$
+\rho(X, Y)=\frac{V(X, Y)}{\sigma_X \sigma_Y}
+$$
+Note the math behind derivation.
+\paragraph{Example}
+Assume $x \sim f(x)=N e^{-x^2}$\\
+Find $N \Rightarrow $
+
+$$
+\int_{-\infty}^{\infty} f(x) d x=1 \Rightarrow N \Rightarrow \frac{1}{\sqrt{\pi}}$$\\
+Find $E[x] \Rightarrow $
+
+$$\int_{-\infty}^{\infty} x f(x) d x=0$$ as its add function.\\
+Find $E\left[(x-\mu)^2\right] \Rightarrow$
+
+$$E\left[x^2\right]-(E[x])^2$$
+
+$$
+E\left[x^{2}\right]=\int_{-\infty}^{\infty} x^2 f(x) d x \quad \Rightarrow \quad \sigma^2=\frac{1}{2}
+$$
+To get $\sigma=1$.
+$f(x)=\frac{1}{\sqrt{2 \pi}} e^{-\frac{x^2}{2}} \rightarrow$ stanclond model
+shift $x$ by $\mu$ and scale by $\frac{1}{\sigma}$. ie. $z=\frac{x-\mu}{\sigma}$
+$\Rightarrow$ Now Model
+$$
+f(x)=\frac{1}{\sqrt{2 \pi} \sigma} e^{-\frac{(x-\mu)^2}{2 \sigma^2}}
+$$
+$$
+\frac{1}{N}=\sigma \sqrt{2 \pi}, \text { Mean }=\mu \quad \text { variance }=\sigma^2
+$$
+\subsubsection{The characteristic function}
+\begin{definition}
+    {characteristic function}
+    {\varphi(t)=E\left[e^{i t X}\right]=\int_{-\infty}^{\infty} e^{i t X} f(X) d X}
+    {which means that $f(X)$ is completely defined by the characteristic functions
+    $$
+    f(X)=\frac{1}{2 \pi} \int_{-\infty}^{\infty} \varphi(t) e^{-i X t} d t
+    $$
+    The usefulness of the characteristic function is shown in proof for central limit theorem, or algebraic moments
+    $$
+    \mu_n=E\left[X^n\right]=\int_{-\infty}^{\infty} X^n f(X) d X
+    $$
+    which can be obtained by differentiating the characteristic function $n$ times at point $t=0$
+    $$
+    \varphi_n(t)=\frac{d^n \varphi(t)}{d t^n}=i^n \int_{-\infty}^{\infty} x^n e^{i t X} f(X) d X
+    $$
+    such that
+    $\varphi_n(0)=i^n \mu_n$.
+    }
+\end{definition}
+\subsection{Common Distribution}
+This section will discuss the common distribution, including the binomial distribution, poisson distribution, normal distribution, chi-squared distribution, exponential distribution, polynomial distribution, and the multi-variate normal distribution.
+
+p.d.f.s depend on one random variable $x$ and parameters $\theta$, write as
+$$
+p(x;\theta)
+$$
+where `;' distinguish rvs and parameters
+\subsubsection{Binomial Distribution}
+\begin{definition}
+    {Binomial distribution}
+    {P(k ; p, n)=\frac{n !}{k !(n-k) !} p^k(1-p)^{n-k}}
+    {given $n$ trials,$p(success) = p$, $p(fail)= q = 1- p$ and the total probability of k triads are success is 
+    $$
+    p^k(1-p)^{n-k}
+    $$}
+\end{definition}
+\subsubsection{Poisson Distribution}
+\begin{definition}
+    {Poisson distribution}
+    {P(k, \lambda)=\frac{e^{-\lambda} \lambda^k}{k !}}
+    {}
+\end{definition}
+Derivation of Poisson Distribution from binomial
+$$
+P(k ; \lambda / n, n)=\left(\frac{\lambda}{n}\right)^k\left(1-\frac{\lambda}{n}\right)^{n-k} \frac{n !}{k !(n-k) !}
+$$
+as $n\rightarrow\infty$, $\lambda\rightarrow\infty$ such that $\lambda/n$ is finite, then
+$$
+\begin{aligned}
+P(k ; \lambda / n, n) & \rightarrow \frac{\lambda^k}{k !} e^{-\lambda} \\
+& \rightarrow P(k ; \lambda)
+\end{aligned}
+$$
+\subsubsection{Normal Distribution}
+\begin{definition}
+    {Normal Distribution}{
+    p(x ; \mu, \sigma)=\frac{1}{\sqrt{2 \pi} \sigma} e^{-\frac{(x-\mu)^2}{2 \sigma^2}}
+    }{}
+\end{definition}
+
+
+\subsubsection{Multi-variate Normal Distribution}
+for independent r.v.s. $x_1, x_2, \ldots, x_n$ 
+$$
+p(\va*{x};\va*{\mu},\va*{\sigma}) = \prod_{i=1}^n p(x_i;\mu_i,\sigma_i) = \prod_{i=1}^n \frac{1}{\sqrt{2 \pi} \sigma_i} e^{-\frac{(x_i-\mu_i)^2}{2 \sigma_i^2}}
+$$
+with dependent r.v.s. have a correlation term:
+$\va*{\sigma}$ = 
+$$
+\begin{pmatrix}
+    \sigma_1^2 & \sigma_{12} & \sigma_{13} \\
+    \sigma_{21} & \sigma_2^2 & \sigma_{23} \\
+    \sigma_{31} & \sigma_{32} & \sigma_3^2 \\
+\end{pmatrix}
+$$
+Terms in exp becomes
+$(x-\mu)^T V^{-1} (x-\mu)$
+\subsubsection{The Exponential Distributions}
+\begin{definition}
+    {Exponential Distribution}
+    {p(x ; \lambda)=\lambda e^{-\lambda x}}
+    {The exponential distribution is the continuous analogue of the geometric distribution. It describes the time between events in a Poisson process, i.e. a process in which events occur continuously and independently at a constant average rate.}
+\end{definition}
+
+Exponential distribution is often concerned with the amount of time until some event occurs. For example, the amount of time (beginning now) until an earthquake occurs has an exponential distribution. Other examples include the length, in minutes, of long distance business telephone calls, and the amount of time, in months, a car battery lasts.
+
+\subsubsection{Polynomial distributions} 
+\subsubsection{Chi-squared Distribution}
+\begin{definition}
+    {Chi-squared Distribution}
+    {P(x ; k)=\frac{1}{2^{k / 2} \Gamma(k / 2)} x^{k / 2-1} e^{-x / 2}}
+    {Chi-squared distribution with $k$ degree of freedom gives the distribution of the sum of squares of k independent standard normal variables}
+\end{definition}
+Example of Chi-squared distribution is the distribution of the sum of squares of k independent standard normal variables(by definition).
+$$
+\chi^2 = \sum_{i=1}^k x_i^2
+$$
+where $x_i$ are independent standard normal variables, $k$ is the degree of freedom, in this case, $k$ is the number of independent standard normal variables.\\
+
+Another example is the ratio of negative log likelihoods for two models: according to Wilks' theorem, the ratio of negative log likelihoods for two models is distributed as a chi-squared distribution with the difference in the number of parameters as the degree of freedom.
+
+Another example is chi-squared test, which is used to determine whether there is a significant difference between the expected frequencies and the observed frequencies in one or more categories.
+
+\begin{table}[h]
+    \centering
+    \caption{Common Probability Distributions}
+    \small
+    \renewcommand{\arraystretch}{2.0} % Adjust the factor for line spacing
+    \begin{tabularx}{\textwidth}{|c|X|X|X|X|X|}
+        \hline
+        \hline
+        Distribution & PDF \( f(x) \) & CDF \( F(x) \) & Mean \( \mu \) & Variance \( \sigma^2 \) & Characteristic Function \( \phi(t) \) \\
+        \hline
+        Gaussian & \( \frac{1}{\sqrt{2\pi}\sigma}e^{-\frac{(x-\mu)^2}{2\sigma^2}} \) & \( \frac{1}{2}\left[1 + \text{erf}\left(\frac{x-\mu}{\sigma\sqrt{2}}\right)\right] \) & \( \mu \) & \( \sigma^2 \) & \( e^{i\mu t - \frac{\sigma^2 t^2}{2}} \) \\
+        \hline
+        Exponential & \( \lambda e^{-\lambda x} \) & \( 1 - e^{-\lambda x} \) & \( \frac{1}{\lambda} \) & \( \frac{1}{\lambda^2} \) & \( \frac{\lambda}{\lambda - it} \) \\
+        \hline
+        Uniform & \( \frac{1}{b-a} \) & \( \frac{x-a}{b-a} \) & \( \frac{a+b}{2} \) & \( \frac{(b-a)^2}{12} \) & \( \frac{e^{itb} - e^{ita}}{it(b-a)} \) \\
+        \hline
+        Poisson & \( \frac{e^{-\lambda}\lambda^x}{x!} \) & \( e^{-\lambda}\sum_{k=0}^{x}\frac{\lambda^k}{k!} \) & \( \lambda \) & \( \lambda \) & \( e^{\lambda(e^{it}-1)} \) \\
+        \hline
+        Binomial & \( \binom{n}{x} p^x(1-p)^{n-x} \) & \( \sum_{k=0}^{x}\binom{n}{k}p^k(1-p)^{n-k} \) & \( np \) & \( np(1-p) \) & \( (pe^{it} + 1-p)^n \) \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\subsubsection{Convolution of distributions}
+Convolution is used when we want to find the distribution of the sum of two independent random variables.\\
+Note that the convolution of two distributions is the same as the product of their characteristic functions.\\
+\subsubsection{Generating samples from distributions and the inverse c.d.f.}
+Using inverse c.d.f. to generate samples from distributions
+or use accept and reject method
+\subsection{Limit Theorems}
+\subsubsection{Convergence}
+The law of large numbers states that the sample mean converges to the true mean as the sample size increases. The central limit theorem states that the distribution of the sample mean is Gaussian as the sample size increases. The central limit theorem is a consequence of the law of large numbers
+\subsubsection{Central Limit Theorem}
+The sum of a random variable, $S$, where
+\begin{equation*}
+S=\sum X_i \text { which has } \mu=\sum \mu_i \text { and } \sigma^2=\sum \sigma_i^2 .
+\end{equation*}
+
+The central limit theorem states that the distribution of $S$ will tend to a normal distribution with $\mu=\mu$ and $\sigma=\sigma$ as $N \rightarrow \infty$. In particular if I redefine the random variable so that it is shifted by the mean and scaled by the standard deviation so that,
+\begin{equation*}
+S \rightarrow S^{\prime}=\frac{S-\sum_{i=1}^N \mu_i}{\sqrt{\sum_{i=1}^N \sigma_i^2}}
+\end{equation*}
+\subsubsection{Errors}
+Imagine some linear function, $Z=a X+b$, where $a$ and $b$ are constants and $X$ is a random variable with a measured or known variance. We can compute the variance of $Z$ using linear expectation properties:
+\begin{equation*}
+\begin{aligned}
+V(Z) & =E\left[Z^2\right]-E[Z]^2 \\
+& =E\left[(a X+b)^2\right]-E[a X+b]^2 \\
+& =a^2 E\left[X^2\right]+a b E[X]+b^2-a^2 E[X]^2-2 a b E[X]-b^2 \\
+& =a^2\left(E\left[X^2\right]-E[X]^2\right) \\
+& =a^2 V(X) .
+\end{aligned}
+\end{equation*}
+We can now extend this to any generic function $f(X)$ if we only consider small errors and the linear term in a Taylor expansion of $X$ around some point $X_0$,
+\begin{equation*}
+f(X) \approx f\left(X_0\right)+\left.\left(X-X_0\right)\left(\frac{d f}{d X}\right)\right|_{X=X_0}+\mathcal{O}\left(X^2\right) .
+\end{equation*}
+We can then write the variance and standard deviation as
+\begin{equation*}
+\begin{gathered}
+V(f) \approx\left(\frac{d f}{d X}\right)^2 V(X) \\
+\sigma_f \approx\left|\frac{d f}{d X}\right| \sigma_X .
+\end{gathered}
+\end{equation*}
+
+We can now extend this formalism to functions of many random variables. For example if we have two random variables, $X$ and $Y$, and a generic function $f(X, Y)$ then,
+\begin{equation*}
+\begin{aligned}
+V(f) & =\left(\frac{d f}{d X}\right)^2 V(X)+\left(\frac{d f}{d Y}\right)^2 V(Y)+2\left(\frac{d f}{d X}\right)\left(\frac{d f}{d Y}\right) \operatorname{cov}(X, Y) \\
+\sigma_f^2 & =\left(\frac{d f}{d X}\right)^2 \sigma_X^2+\left(\frac{d f}{d Y}\right)^2 \sigma_Y^2+2\left(\frac{d f}{d X}\right)\left(\frac{d f}{d Y}\right) \rho \sigma_X \sigma_Y
+\end{aligned}
+\end{equation*}
+
+
+\section{Classical Statistics, Estimation and Uncertainties}
+\subsection{Frequentist evaluation of estimators}
+\subsubsection{Consistency, bias and efficiency of estimates}
+\paragraph{Consistency}
+    A consistent estimator will converge to true value as datasize increases:
+    $$
+    \lim _{N \rightarrow \infty} \hat{\theta}(\vec{x})=\theta
+    $$
+\paragraph{Bias}
+    The bias of an estimator is the difference between the expected value of the estimator and the true value of the parameter being estimated:
+    $$
+    \operatorname{Bias}(\hat{\theta})=E[\hat{\theta}]-\theta
+    $$
+    It is generally preferrable to have consistent estimator as opposed to biased estimators.
+\paragraph{Efficiency}
+    The efficiency of an estimator is the ratio of the variances of two unbiased estimators. The estimator with the lower variance is said to be more efficient.
+
+    The minimun variance bound states that the variance of an unbiased estimator is always greater than or equal to the inverse of the Fisher information.
+    
+\subsubsection{Bias-Variance Trade-off}
+    Bias-variance trade-off applies to both ML and statistical modelling.
+    In order to minimise the variance, we want to take in more data, however, the more data we take in, the more bias we introduce. This is the bias-variance trade-off.
+    \begin{itemize}
+        \item High bias, low variance: Simple model that do not depend on the data much, but do not fit the data well. For example, fitting a straight line to a quadratic function. This leads to high bias (fails to capture the true shape of the data), but low variance (the line will always be roughly in the same place relative to the data points).
+        \item Low bias, high variance: Complex model that fit the data well, but do not generalise well.
+        \item In a nutshell, complexity scales with variance, and simplicity scales with bias.
+    \end{itemize}
+\subsubsection{Estimation of the mean, variance and standard deviation}
+\begin{enumerate}
+    \item mean: the arithmetic mean of a sample provides a consistent estimator of the true mean. i.e. $\hat{\mu}=\frac{1}{N} \sum_{i=1}^N x_i$
+    \item the variance of the estimate of the mean is given by $\sigma_{\hat{\mu}}^2=\frac{\sigma^2}{N}$, where $\sigma^2$ is the variance of the distribution. This is a result of the central limit theorem. The sample mean is the most efficient estimator of the true mean, as the variance is the minimum variance bound, assuming Gaussian distribution.
+\end{enumerate}
+\subsection{The likelihood function}
+\begin{definition}
+    {The likelihood function}
+    {p(X|\theta) = \prod_{i=1}^N p(x_i|\theta)}
+    {The likelyhood function is a function of $\theta$ only, and is the probability of observing the data given the parameter $\theta$}
+\end{definition}
+\subsubsection{Minimum Variance Bound}
+There is another useful property of the likelihood which relates to efficiency of estimators. It can be shown that there is a limit to the efficiency of an estimator called the minimum variance bound. Providing the estimator is unbiased then the minimum variance bound states that
+\begin{equation*}
+\begin{aligned}
+V(\hat{\theta}) & \geq\left(E\left[\left(\frac{\partial \ln L}{\partial \theta}\right)^2\right]\right)^{-1} \\
+& \geq-\left(E\left[\left(\frac{\partial^2 \ln L}{\partial \theta^2}\right)\right]\right)^{-1} .
+\end{aligned}
+\end{equation*}
+
+An estimator is determined to be efficient if the variance of the estimator, $V(\hat{\theta})$, is the equal to the minimum variance bound. Otherwise an estimators efficiency is quantified by the ratio of the minimum variance bound to the variance.
+\subsection{Maximum Likelihood Estimation}
+Maximise L is equivalent to maximise $\ln(L)$.In practise it is much easier to work with the natural logarithm of the likelihood, because then the product turns into a sum, and at least for computers it is easier to sum small numbers than find their product. The $\hat{\theta}$ which maximises $L$ will also be the value that maximise $\ln L$ so it is more common to the see $\mathrm{ML}$ condition written as
+\begin{equation*}
+\left.\frac{\partial \ln L(\theta)}{\partial \theta}\right|_{\theta=\theta \hat{\theta}}=\frac{\partial}{\partial \theta} \sum_{i=1}^N \ln p\left(X_i \mid \theta\right)=0 .
+\end{equation*}
+It can be shown that the variance of the estimate is equal to minimum variance bound as N is large.
+\subsection{Least-square method}
+$$
+\chi^2  = \sum_{i=1}^N \frac{(y_i - f(x_i))^2}{\sigma_i^2}
+$$
+$\sigma_{y_i}$ is the associated uncertainty of $y_i$.
+We will see that it is liked to the log likelihood function by 
+$$
+\chi^2 = -2 \ln L + C
+$$
+note that both side of the equation is a function of $\theta$ (estimated ?) only.\\
+This allows us to obtain the relationship in difference:
+$$
+{\Delta \chi^2}= -2  \Delta \ln L
+$$
+\begin{theorem}
+    {Wilks' theorem}
+    {As $N\rightarrow\infty $, the test-statistic which is twice the negative log likelihood ratio approached the $\chi^2$ distribtion. This is an example of hypothesis test where the null hypothesis is the valule of the parameter at the best fit and the alternative hypothesis is the value of the parameter where we read off the log likelihood difference.}
+\end{theorem}
+\subsubsection{Fisher information}
+
+Firstly, we need to define the score function, which is the derivative of the log likelihood function with respect to the parameter $\theta$.
+
+\begin{definition}
+    {Score function}
+    {S(\theta) = \frac{\partial \ln L(\theta)}{\partial \theta}}
+    {The score function is the derivative of the log likelihood function with respect to the parameter $\theta$.}
+\end{definition}
+It can be shown that the expectation value of score is zero.
+
+\begin{definition}
+    {Fisher information}
+    {I(\theta) & =E\left[\left(\frac{\partial \ln L(\theta)}{\partial \theta}\right)^2\right], \\ & =-E\left[\frac{\partial^2 \ln L(\theta)}{\partial \theta^2}\right]}
+    {The Fisher information is the expected value of the squared score function, i.e. variance of the score function. It is then implified by the second derivative of the log likelihood function.}
+\end{definition}
+
+This fisher information is related to the minimum variance bound by an inverse
+
+
+
+\subsection{Method of Moments}
+Method of moments is a method of estimating the parameters of a statistical model.
+Foe example, give a distribution of known form but unknown parameters, $$f(x;\va{\theta})$$
+We can estimate the parameters by equating the sample moments to the theoretical moments.
+
+\begin{align}
+    1 &= \int_{-\infty}^{\infty} f(x ; \va{\theta}) d x \\
+    \mu &= \int_{-\infty}^{\infty} x f(x ; \va{\theta}) d x  = \text{some funciton of theta}, i.e. g(\mu,\sigma)\approx \hat{\mu} \\
+    \mu^{2} &=\int_{-\infty}^{\infty}(x-\mu)^{2} f(x ; \va{\theta}) d = \text{some function of theta} \approx \hat{\mu}^{2} \\
+    &...
+\end{align}
+Here $\va{\theta}$ is a vector of parameters, hence we need the right amount (number of independent parameters, i.e. $\mu$,$\sigma$) of moments to estimate the parameters.
+We can estimate the parameters by equating the sample moments $\hat{\mu}$ to real moments $\mu$, and solve simultaneous equations to get the parameters.
+\subsubsection{Uncetainties from method of moments estimates}
+
+\subsection{Goodness-of-Fit Tests}
+This section will discuss the question of "how good was my fit in the first place", the answer to which is the goodness-of-fit test.
+
+\begin{definition}
+    {Test Statistics}
+    {\text{Quantify the agreement between the data and the model}}
+    {i.e. from the probability distribution, we can compute the probabilitay that we got the value we did, which in term gives us info on what we think the quality of the fit. Example of Test Statistics include $\chi^2$}
+\end{definition}
+
+\subsubsection{$\chi^2$ Tests}
+$\chi^2$ tests is chosen as we expect $\chi^2/d.o.f = 1$, as the expectation of the $\chi^2$ for $k$ degree of freedom is $k$. 
+
+The $\chi^2$ probability, i.e. $1 - F(\chi^2)$ (1 - c.d.f. of the $\chi^2$ distribution of the appropriate degree of freedom). What the value $p$ means is the probability that a function that does describe the data gives a value of the $\chi^2$ larger than the one you find (A larger $\chi^2$ means you did a bad job fitting).
+
+For p-value:
+\begin{itemize}
+    \item if p-value is small, the model do not agree well
+    \item if p-value is large, the model and data agree too well, over fitting the data.
+\end{itemize}
+
+$\chi^2$ test is very good at spotting the small p-value.
+
+
+This test is very dependent on the binning that us used and it is bad if you are trying to assess the compatibility of a model with may only contain a discrepancy in one bin. Example in Higgs Boson discovery, the $\chi^2$ test is not good at spotting the small discrepancy in the 125 GeV bin.
+
+\subsubsection{Residual and Pull}
+Residual is the difference between the data and the model, i.e. $r_i = y_i - f(x_i)$, where $y_i$ is the data and $f(x_i)$ is the model.\\
+Pull is residual weighted by the error, i.e. $p_i = \frac{r_i}{\sigma_i}$, where $\sigma_i$ is the error of the data. It is also known as\textit{ student's t distribution.}\\
+Pull should be Gaussian distributed, with mean 0 and variance 1. If the pull is not Gaussian distributed, it means that the model is not a good fit to the data.\\
+Note that by summing the pull in quadrature, we get the $\chi^2$ value.
+
+\subsubsection{Kolmogorov-Smirnoff KS Tests}
+KS test can be used to test the compatibility of two distributions.
+It is an unbinned test, so it can be an alternative to the $\chi^2$ test when the number of the event is small.
+KS score is determined by finding the maximum difference between the two cumulative distributions, multiplying the square root of the sample size.\\
+\begin{definition}
+    {KS score}
+    {P_{\text {KS}}=\max\left|F_{1}(x)-F_{2}(x)\right|\sqrt{N}}
+    {which is the maximum deviation between the two distributions CDF and multiplying by the square root of the sample size.}
+\end{definition}
+\subsection{Confidence Intervals}
+Whenever we qant to quote a point estimate, we should also quote an interval estimate. 
+e.g. The common practise is quote 68.3\% or 95.4\% confidence interval.
+\subsubsection{Bayesian Intervals}
+A Bayesian credible interval of $\mu$ corresponding to some confidence $\beta$ is constructed by requiring that
+\begin{equation*}
+\beta=\int_{\mu_1}^{\mu_2} p(\mu \mid X) d \mu .
+\end{equation*}
+
+\subsubsection{Classical Intervals (Neyman-Pearson intervals)}
+Classical intervals are based on the Neyman-Pearson lemma, which states that the likelihood ratio test is the most powerful test for a given significance level $\beta$
+For a frequentist the confidence interval, $\left[\mu_1, \mu_2\right]$, is a member of a set such that
+\begin{equation*}
+p\left(\mu \in\left[\mu_1, \mu_1\right]\right)=\beta .
+\end{equation*}
+\subsubsection{Flip-flopping}
+Flip-flopping is the problem of the Neyman-Pearson intervals, where the upper and lower limits of the interval flip-flop as the data changes. 
+\subsubsection{Feldman-Cousins intervals}
+Feldman-Cousins intervals are a frequentist method for constructing confidence intervals. It effectively solves the problem of flip-flopping between the upper and lower limits. It is a generalisation of the Neyman-Pearson lemma.
+For a given confidence level $\beta$, the Feldman-Cousins interval is the interval that maximises the probability of the interval containing the true value of the parameter, $\mu$.
+Firstly, for each X, with $\mu$ fixed, we can define the likelihood ratio
+$R=\frac{p(X \mid \mu)}{p(X \mid \hat{\mu})}$,
+and we add values of X until the cumulative likelihood ratio is equal to $\beta$.
+Going back to our simple example of the normal distribution then $\hat{\mu}=0$ when $X<0$ and $\hat{\mu}=X$ when $X \geq 0$ so that the likelihood ratio will be
+\begin{equation*}
+R=\frac{p(X \mid \mu)}{p(X \mid \hat{\mu})}\left\{\begin{array}{ll}
+\frac{\exp \left[-(X-\mu)^2 / 2\right]}{1} & \text { if } X \geq 0 \\
+\frac{\exp \left[-(X-\mu)^2 / 2\right]}{\exp \left[-X^2 / 2\right]} & \text { if } X<0
+\end{array} .\right.
+\end{equation*}
+\subsection{Hypothesis Testing}
+Type I error is the probability of rejecting the null hypothesis when it is true,$\alpha$\\
+$$
+\alpha = P( X > X_0| H_0)
+$$
+Type II error is the probability of accepting the null hypothesis when it is false. i.e. $(1-\beta)$\\
+$$
+\beta = P (X > X_0| H_1)
+$$
+
+\subsubsection{Neyman-Pearson Lemma}
+\begin{theorem}
+    {Neyman-Pearson Lemma}
+    {The likelihood ratio test is the most powerful test
+    $$
+    T = -2 \ln \frac{L(\theta_0)}{L(\theta_1)}
+    $$}
+\end{theorem}
+Note here that $T$ follows a $\chi^2$ distribution with x degree of freedom, where x is the difference in the number of parameters between the two models.
+The Neyman-Pearson Lemma addresses the case where you want to construct a test with the maximum power subject to a specified Type I error rate ($\alpha$). In other words, it helps you design the most powerful test for detecting a particular effect, given a constraint on the probability of making a Type I error.
+\subsubsection{Quoting a significance}
+We usually quote the p-value as the significance of the result. The p-value is the probability of obtaining a result at least as extreme as the one that was actually observed, given that the null hypothesis is true. Note that a larger test statistic means a smaller p-value.\\
+The smaller the p-value, the more significant the result is.
+Consequently, when converting the $p$-value to a $Z$-score I need to incorporate both sides of the normal distribution tail. This is equivalent to the conversion for \textbf{two-sided},
+\begin{equation*}
+Z=\Phi^{-1}(1-p / 2)
+\end{equation*}
+where $\Phi^{-1}$ is the inverse c.d.f. of the normal distribution. Notice that this is equivalent to the computation we have often used from the $\chi^2$ distribution with one degree of freedom,
+\begin{equation*}
+Z=\sqrt{\Psi^{-1}(1-p)}
+\end{equation*}
+where $\Psi^{-1}$ is the inverse c.d.f. of the $\chi^2$ distribution.
+\\
+For\textbf{ one-sided} test, we can use the conversion
+\begin{equation*}
+Z=\Phi^{-1}(1-p),
+\end{equation*}
+using the inverse c.d.f. of the normal distribution and
+\begin{equation*}
+Z=\sqrt{\Psi^{-1}(1-2 p)}
+\end{equation*}
+using the inverse c.d.f. of the $\chi^2$ distribution. Below is a snippet of code which demonstrates this
+
+\section{Limit Setting}
+$CL_{sb}$ is the confidence level for the signal + background hypothesis.
+$$
+CL_{sb} = P(X<X_0|H_1)
+$$
+Assuming the signal + background hypothesis is true, the probability of obtaining a value of the test statistic $X$ less than $X_0$ is $CL_{sb}$.\\
+The limit of $CL_{sb}$ is that it has very low sensitivity to the signal, as the signal is usually very small compared to the background.\\
+The improvement is to use the $CL_s$ method, which is the confidence level for the signal hypothesis.
+$$
+CL_s = \frac{p_{sb}}{1-p{b}}
+$$
+where $p_{sb}$ is the probability of obtaining a value of the test statistic $X$ more than $X_0$ assuming the signal + background hypothesis is true, and $p_b$ is the probability of obtaining a value of the test statistic $X$ less than $X_0$ assuming the background only hypothesis is true.\\
+Note that p-value is defined differently in the two hypothesis.
+\begin{enumerate}
+    \item If two test are indistinguishable, then $p_{sb} = 1 - p_b$.
+    \item If two test are perfectly distinguishable, then $1-p_b =1 $ and $CL_{s} = p_{sb} = CL_{sb}$
+\end{enumerate}
+\subsection{Resamplings}
+Resampling is the process of drawing data from a sample to produce additional samples.
+Resample is done to estimate the distribution of the estimate $\hat{\theta}$.
+\subsubsection{Permutation Test}
+$T=\Delta \bar{X}=\bar{X}_A-\bar{X}_B$
+If the events are from same distribution, then random swap will not affect the difference in the mean.\\
+\subsubsection{Non-Parametrix Bootstrapping}
+\begin{itemize}
+    \item Bootstrap generates the toys by sampling from the original dataset with \textbf{replacement}.
+    \item Non-parametric bootstrap is more flexible and doesn't assume a particular distribution, making it robust but potentially less efficient than the parametric counterpart.
+\end{itemize}
+\subsubsection{Parametric Bootstrap}
+\begin{itemize}
+    \item The samples are generated based on the parameters we have fitted, hence the name parametric bootstrap.
+    \item Parametric bootstrap relies on the assumption that the data follows a specified parametric model, making it more efficient if the model is correct.
+\end{itemize}
+\subsubsection{Jackknife}
+\begin{itemize}
+    \item Jackknife is a resampling technique used to estimate the bias and standard error of a statistic.
+    \item Jackknife is a special case of the leave-one-out cross-validation technique.
+    \item Give N data points, we can generate N samples by leaving out one data point each time.
+        \begin{equation*}
+        \begin{array}{r}
+        \hat{\theta}_1=f\left(X_2, X_3, \ldots, X_N\right) \\
+        \hat{\theta}_2=f\left(X_1, X_3, \ldots, X_N\right) \\
+        \vdots \\
+        \hat{\theta}_N=f\left(X_1, X_2, \ldots, X_{N-1}\right) .
+        \end{array}
+        \end{equation*}
+    \item The Jackknife average is the average of the N samples.
+    $$
+    \hat{\theta}_{\mathrm{J}}=\frac{1}{N} \sum_{i=1}^{N} \hat{\theta}_{i}
+    $$
+    \item We use this to estimate the bias with is 
+    $$
+    \mathrm{Bias}(\hat{\theta})=(N-1)\left(\hat{\theta}_{\mathrm{J}}-\hat{\theta}\right)
+    $$
+    \item This results in a bias-corrected estimator
+    $$
+    \hat{\theta'}_{\mathrm{J}}=\hat{\theta}_{\mathrm{J}}-\mathrm{Bias}(\hat{\theta}) = {N \hat{\theta}_{\mathrm{J}}}- (N-1)\hat{\theta}
+    $$  
+\end{itemize}
+\subsubsection{BCA}
+Bias corrected and accelerated (BCA) bootstrap is a method for estimating the accuracy of a parameter of a distribution. It improves on the basic bootstrap by adjusting for bias and skewness in the distribution of the sample statistic. It also has better coverage than the percentile bootstrap.
+\section{Advanced Topics}
+\subsection{Measurement errors and forward modelling}
+See ADS notes for more details.
+\subsection{Optimisation}
+\subsubsection{Optimisation Algorithms}
+We have a few algorithms to find the minimum of a function, including the gradient descent, conjugate gradient, and the Newton-Raphson method.
+\subsection{Regularisation}
+Regularisation is a technique used to prevent overfitting in complex models. It is a form of regression, that constrains/regularises or shrinks the coefficient estimates towards zero. In other words, this technique discourages learning a more complex or flexible model, so as to avoid the risk of overfitting.\\ See ADS notes for more details.
+\subsection{Density Estimation}
+This chapter uses the Kernal Density Estimation (KDE) method to estimate the probability density function of a random variable,which replaces the step function.
+\subsubsection{Kernal Density Estimation}
+\begin{definition}
+    {Kernal Density Estimation}
+    {\hat{f}(x)=\frac{1}{N} \sum_{i=1}^{N} \frac{1}{h} K\left(\frac{x-x_{i}}{h}\right)}
+    {where $K$ is the kernal function, $h$ is the bandwidth, and $N$ is the number of data points.}
+\end{definition}
+\subsubsection{Expectation Maximisation and GMM}
+See ADS notes 
+\end{document}

@@ -1,0 +1,754 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{import}
+\import{../Template/}{format.tex}
+
+\newcommand{\topic}{Applied Data Science}
+
+\begin{document}
+
+\title{\topic}
+\begin{titlepage}
+    \maketitle
+\end{titlepage}
+
+\tableofcontents
+
+\newpage
+\begin{abstract}
+\noindent
+Non-examinable:
+Linear discriminant analysis,SVMs, Boosting and bagging, random forests, hierarchical divisive clustering, kernel PCA, ISOMAP, t-SNE, Hartigan Wong (from k-means),self-organising maps, HCS algorithm (from graph clustering), local outlier factor.
+\end{abstract}
+
+\section{Understanding the structure of Data}
+
+\begin{theorem}
+    {Simpson's paradox}
+    {Simpson's paradox is observed in probability and statistics; a trend appears in several groups of data but disappears or reverses when the groups are combined.}
+\end{theorem}
+
+\subsection{Adjusting data without tampering with signal}
+\subsubsection{Expression ranges and One-hot encoding}
+For categorical data, we assign value by using one-hot encode which are the n unit vectors, which are equal distance from each other, from n-dimensional space to represent n categories
+\subsubsection{Standardisation vs scaling}
+There are different ways of scaling, the most straightforward one is linear scaling, others include log scaling.
+Note that outliers will seriously affect scaling, it can be done by cap our value, however, it also means that we throw away data points
+Note that we lose certain information when standardise, i.e. for Z 
+$$
+Z=\frac{x_i-\mu}{\sigma}
+$$
+you will lose the standard deviation.
+Also, $\mu$ and $\sigma$ can be influenced by outliers. Median and MAD(median absolute deviation)are not affected by outliers
+\begin{align}
+    Z_{\text {med }} & =\frac{x_i-\text { median }}{M A D} \\
+    M A D & =\text { median }\left(\mid x_i-\text { median } \mid\right)
+\end{align} 
+\subsubsection{Near zero variance}
+Near zero variance means that the variable has little variance i.e. almost constant
+\subsubsection{Multi-collinearity}
+Multi-collinearity is a concept where independent variables are highly correlated. i.e. correlation coefficient = 1.
+We use PCA analysis to reduce the dimension of the highly correlated variable space 
+\subsubsection{Missing Data}
+There are three types of missing data:
+\begin{enumerate}
+    \item Missing completely at random (MCAR): the reason for any data being missing data is independent from all variables, so introduces no bias
+    \item Missing at random (MAR): we can usually account for the bias, e.g. the missing data is related to a predictor variable that itself is fully recorded
+    \item Missing not at random (MNAR): the value of the missing data is related to the reason for it being missing
+\end{enumerate}
+\subsubsection{Imputation}
+Imputation is the process of replacing missing data with substituted values. Common imputation methods include:
+\begin{itemize}
+    \item Static imputation: replace missing data with a constant
+    \item Generative imputation: use a model to predict the missing data
+    \item Omission: remove the data point with missing data
+    \item Multiple imputation: generate multiple imputed datasets and combine them
+\end{itemize}
+
+\subsubsection{Dimensionality reduction}
+Dimensionality reduction is the process of reducing the number of random variables under consideration by obtaining a set of principal variables. It can be done by:
+
+
+\subsection{Engineering Model Robustness}
+\begin{itemize}
+    \item we draw the samples independently and identically (iid) at random from the distribution
+    (there is no underlying structure that is present in the data)
+    \item the sets are disjunct partitions of the original distribution
+    (no intersection between training set and test set)
+    the size of the validation and test sets should be comparable (if not identical)
+    \item The validation set should be large enough to detect differences between models
+    \item accuracy is not the only metric to measure the performance of the model
+    \item  on the test set, the error between the prediction and the actual label is the test error
+    \item the objective function of the algorithm minimizes the test errors by parameter tuning
+    \item Models are further evaluated for Bias and Variance (assessment of overfitting/underfitting)
+\end{itemize}
+\subsubsection{Validation set}
+\begin{itemize}
+    \item K-fold validation is used to tune the hyperparameters of the model
+    \item Leave-one-out cross-validation (LOOCV) is a special case of k-fold validation, where k = n
+    \item Data is split into training, validation and test sets
+\end{itemize}
+\subsubsection{Confusion matrix}
+\begin{itemize}
+    \item True positive (TP): correctly predicted positive
+    \item False positive (FP): incorrectly predicted positive
+    \item True negative (TN): correctly predicted negative
+    \item False negative (FN): incorrectly predicted negative
+\end{itemize}
+\subsubsection{Unbalanced data}
+Unbalance data should be fixed by up-weighting or down-sampling
+\\
+\begin{theorem}
+    {Nyquist–Shannon sampling theorem}{
+    The theorem states that a function $x(t)$ that contains no frequencies higher than $B$ hertz is completely determined by giving its ordinates at a series of points spaced $\frac{1}{2 B}$ seconds apart.
+    }
+\end{theorem}
+\begin{theorem}
+    {Kullback-Leiber divergence (per classes or using a binning approach for continuous data)
+    }{}
+\end{theorem}
+\section{Supervised Learning: Regression}
+We assume the model
+$$
+Y=\beta_0+\beta_1 X+\epsilon
+$$
+where $\beta_0$ and $\beta_1$ are two unknown constants that represent the intercept and the slope; $\beta_0$ and $\beta_1$ are also known as coefficients or parameters and $\epsilon$ is the error term.
+
+Given the estimates $\hat{\beta}_0$ and $\hat{\beta}_1$ for the model coefficients, we predict the output, $\hat{y}$ using
+$$
+\hat{y}=\hat{\beta}_0+\hat{\beta}_1 x
+$$
+where $\hat{y}$ indicates the prediction of $Y$ on the basis of $X=x$. The hat symbol denotes an estimated value. By minimising the sum of squared errors (SSE), we can find the estimated coefficients:
+\begin{equation*}
+\hat{\beta}_1=\frac{\sum_{i=1}^n\left(x_i-\bar{x}\right)\left(y_i-\bar{y}\right)}{\sum_{i=1}^n\left(x_i-\bar{x}\right)^2}
+\end{equation*}
+and
+\begin{equation*}
+\hat{\beta}_0=\bar{y}-\hat{\beta}_1 \bar{x}
+\end{equation*}
+
+
+\subsection{Standard errors}
+The standard error of an estimator reflects how it varies under repeated subsampling.
+\begin{equation*}
+S E\left(\hat{\beta}_1\right)^2=\frac{\sigma^2}{\sum_{i=1}^n\left(x_i-\bar{x}\right)^2}
+\end{equation*}
+and
+\begin{equation*}
+S E\left(\hat{\beta}_0\right)^2=\sigma^2\left\{\frac{1}{n}+\frac{\bar{x}^2}{\sum_{i=1}^n\left(x_i-\bar{x}\right)^2}\right\}
+\end{equation*}
+where $\sigma^2=\operatorname{Var}(\epsilon)$.
+\subsection{Hypothesis Testing}
+Standard errors can be used to perform hypothesis testing on the coefficients. The most common hypothesis test involves testing the null hypothesis of:
+$H_0:$ There is no relationship between $X$ and $Y$
+$H_1:$ There is some relationship between $X$ and $Y$
+Or, more formally:
+$$
+\begin{aligned}
+& H_0: \quad \beta_1=0 \\
+& H_1: \quad \beta_1 \neq 0
+\end{aligned}
+$$
+To test the $H_0$ we compute a t-statistic:
+$$
+t=\frac{\hat{\beta_1}-0}{S E\left(\hat{\beta}_1\right)}
+$$
+
+This will be a t-distribution with $n-2$ degrees of freedom.
+Using $R$, we can compute the probability of observing any value $\geq|t|$. We call this probability $\mathbf{p}$-value.
+\subsection{Accuracy}
+Residual standard error:
+\begin{equation*}
+R S E=\sqrt{\frac{1}{n-2} R S S}
+\end{equation*}
+where the residual sum of squares is $R S S=\sum_{i=1}^n\left(y_i-\hat{y_1}\right)^2$\\
+$R^2$,fraction of variance explained is
+\begin{equation*}
+R^2=\frac{T S S-R S S}{T S S}=1-\frac{R S S}{T S S}
+\end{equation*}
+where $T S S=\sum_{i=1}^n\left(y_i-\bar{y}\right)^2$ is the total sum of squares.
+\subsection{Correlation}
+\begin{equation*}
+\operatorname{Cor}(X, Y)=\frac{\sum_{i=1}^n\left(x_i-\bar{x}\right)\left(y_i-\bar{y}\right)}{\sqrt{\sum_{i=1}^n\left(x_i-\bar{x}\right)^2 \sum_{i=1}^n\left(y_i-\bar{y}\right)^2}}
+\end{equation*}
+and $R^2$ is $R^2=\operatorname{Cor}(X, Y)^2$.
+\subsection{Type of Loss Functions}
+\begin{itemize}
+    \item Mean Absolute Error (MAE) (L1 Loss)
+    $$
+    \operatorname{MAE}=\frac{1}{n} \sum_{i=1}^n\left|y_i-\hat{y}_i\right|
+    $$
+    \item Mean Squared Error (MSE) (L2 Loss)
+    $$
+    \operatorname{MSE}=\frac{1}{n} \sum_{i=1}^n\left(y_i-\hat{y}_i\right)^2
+    $$
+    \item Mean Biased Error (MBE)
+    $$
+    \operatorname{MBE}=\frac{1}{n} \sum_{i=1}^n\left(y_i-\hat{y}_i\right)
+    $$
+    It is lesser used as the positive and negative errors cancel each other out.
+    \item Hubber Loss (L1-L2 Loss)
+    $$L_\delta== \begin{cases}\frac{1}{2}(y-f(x))^2, & \text { if }|y-f(x)|<\delta \\ \delta|y-f(x)|-\frac{1}{2} \delta^2, & \text { otherwise. }\end{cases}$$
+\end{itemize}
+Note that L1 loss is more robust to outliers than L2 loss, as L2 loss squares the error term.
+However, it means that L1 is less stable 
+Another consideration when choosing the loss function is the differentiability of the loss function. 
+\subsection{Bias and Variance Trade-off}
+\textbf{Bias:} the model's error rate on the training set (rephrased, the difference between the average prediction and the correct value we are predicting).
+
+A model with high bias is oversimplified (insufficient information acquired from the training data).
+
+\textbf{Variance: }the model's error rate on the validation (or test) set, in addition to the bias
+
+A model with high variance captures the signal and the noise in the training data and fails to generalise well on (unseen) test data.
+
+\subsection{Bias/variance decomposition}
+
+On a model $M$ built on an output variable $y$, and $X$ predictors
+\begin{equation*}
+y=f(X)+\epsilon
+\end{equation*}
+
+Where $\epsilon$ is the error term, expected to be normally distributed with mean 0 .
+The expected error on $Y$ is
+\begin{equation*}
+\operatorname{Err}(Y)=E\left[(Y-f(\hat{X}))^2\right]
+\end{equation*}
+
+The $\operatorname{Err}(Y)$ can be further decomposed as:
+\begin{equation*}
+\operatorname{Err}(Y)=E[f(\hat{X})-f(X)]^2+E\left[(f(\hat{X})-E[f(\hat{X})])^2\right]+\sigma_\epsilon^2
+\end{equation*}
+$\operatorname{Err}(Y)$ is the sum of squared bias, variance and irreducible error.
+
+\subsection{Multiple (linear) regression. Model selection}
+How to choose which subsets to use, for $n$ features, there are $2^n$ subsets, which is not feasible to try all of them.
+\subsection{Model selection.}
+\paragraph{Forward Selection}
+\begin{enumerate}
+    \item Start with the null model, a model that contains an intercept but no predictors
+    \item Fit p simple linear regressions, each with only one feature and add to the null model the variable that results in the lowest RSS.
+    \item Add to that model the variable that results in the lowest RSS amongst all two-variable models.
+    \item Continue until some stopping rule is satisfied, for example when all remaining variables have a $p$-value above some threshold
+\end{enumerate}
+
+\paragraph{backward selection}
+
+\begin{enumerate}
+    \item Start with all variables in the model; fit the model
+    \item Remove the variable with the largest p-value i.e. the variable that is the least statistically significant
+    \item The new $p-1$-variable model is fit, and the variable with the largest p-value is removed.
+    \item  Continue until a stopping rule is reached e.g. when all remaining variables have a significant $p$-value above some threshold
+\end{enumerate}
+
+\subsection{Regularisation}
+Regularisation is the process of adjusting an algorithm to prefer a smaller model, to avoid overfitting. This is done by modifiying the loss function to include a penalty for large weights.
+
+Regularization: modifying the loss function to penalize large weights.
+\begin{equation*}
+\hat{Y}=W \cdot X
+\end{equation*}
+
+The `size' [ $L_2$ norm] of weights:
+\begin{equation*}
+\|w\|=\sqrt{\sum_{i=1}^n w_i^2}
+\end{equation*}
+
+
+\begin{itemize}
+    \item Lasso Regression (L1 Regularisation)
+    $$
+    \operatorname{Loss}=\operatorname{MSE}+\alpha \sum_{i=1}^n\left|w_i\right|
+    $$
+    \item Ridge Regression (L2 Regularisation)
+    $$
+    \operatorname{Loss}=\operatorname{MSE}+\alpha \sum_{i=1}^n w_i^2
+    $$
+    \item Elastic Net Regression (L1-L2 Regularisation)
+    $$
+    \operatorname{Loss}=\operatorname{MSE}+\alpha \sum_{i=1}^n\left(\rho w_i^2+\left(1-\rho\right)\left|w_i\right|\right)
+    $$ 
+\end{itemize}
+
+The advantage of Lasso is that it can shrink some coefficients to zero, which is useful for feature selection. However, it is not differentiable at zero, which makes it difficult to optimise. Ridge regression is differentiable everywhere, but it cannot shrink coefficients to zero. Elastic net regression is a compromise between Lasso and Ridge regression.
+
+\section{K nearest neighbour}
+K nearest neighbour works by finding the $k$ nearest neighbours of a data point, and make prediction based on the labels of the $k$ nearest neighbours. The distance between two data points can be defined using different distance metrics, such as Euclidean distance, Manhattan distance, etc.
+\begin{itemize}
+    \item KNN is a non-parametric method, which means that it does not make any assumptions about the underlying data distribution.
+    \item KNN distance can be defined with Euclidean distance, Manhattan distance, etc.
+    $$
+    d_{eucleadain}\left(x_{i}, x_{j}\right)=\sqrt{\sum_{k=1}^{p}\left(x_{i k}-x_{j k}\right)^{2}}
+    $$
+    $$
+    d_{manhatten} \left(x_{i}, x_{j}\right)=\sum_{k=1}^{p}\left|x_{i k}-x_{j k}\right|
+    $$
+    \item Lower K means a more complex model (Prone to overfitting)
+    \item Higher K means a less complex model (Prone to under fitting). 
+    In the most extreme case, K = N, then your model would predict the same outcome for all data points.
+\end{itemize}
+\subsection{Pros and cons}
+\item
+
+\section{Logistic Regression}
+\subsection{Basics of Logistic Regression}
+\begin{itemize}
+    \item Input: continuous or categorical
+    \item Output: categorical
+    \item Logistic function:
+    $$
+    p(X) = \frac{e^{\beta_0 + \beta_1 X}}{1 + e^{\beta_0 + \beta_1 X}}
+    $$
+    \item The fitting method is maximum likelihood 
+    \item The likelihood function is:
+    $$
+    L(\beta_0, \beta_1) = \prod_{i:y_i=1} p(x_i) \prod_{i':y_{i'}=0} \left(1-p(x_{i'})\right)
+    $$
+    \item We can manipulate the logistic function to get the logit function:
+    $$
+    \log \left(\frac{p(X)}{1-p(X)}\right) = \beta_0 + \beta_1 X
+    $$
+    \item The logit function is a linear function of $X$
+    \item In the case of multiple predictors, the logit function is:
+    $$
+    \log \left(\frac{p(X)}{1-p(X)}\right) = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \ldots + \beta_p X_p
+    $$
+    where $p$ is the number of predictors.
+    \item In the case of multiple classes, we can use one-vs-all method to classify the data.
+    \item It is done by select a class as the baseline, and compare the probability of the other classes with the baseline class.
+    $$
+    P(Y = j | X = x_0) = \frac{e^{\beta_{0 j} + \beta_{1 j} x_0}}{1 + \sum_{l=1}^{K-1} e^{\beta_{0 l} + \beta_{1 l} x_0}}
+    $$
+    $$
+    P(Y = K | X = x_0) = \frac{1}{1 + \sum_{l=1}^{K-1} e^{\beta_{0 l} + \beta_{1 l} x_0}}
+    $$
+    and here $K$ is the baseline class.
+\end{itemize}
+
+\section{Generative vs Discriminative Models}
+Generative models model the joint probability distribution $P(X, Y)$, while discriminative models model the conditional probability distribution $P(Y|X)$.
+\subsection{Example of Generative Model}
+\begin{itemize}
+    \item Naive Bayes
+    \item Linear Discriminant Analysis (non-examinable)
+\end{itemize}
+\subsection{Example of Discriminative Model}
+\begin{itemize}
+    \item Logistic Regression
+    \item Support Vector Machine (non-examinable)
+\end{itemize}
+
+\section{Support Vector Machine(non-examinable)}
+
+\section{PCA}
+    PCA is a dimensionality reduction technique. It is used to reduce the dimension of the data while preserving the most important information.
+    \subsection{Maximal Variance}
+    \begin{enumerate}
+        \item We want to choose a vector $w$ so that it is as informative as possible. i.e. it maximizes the variance of the projection of data onto $w$.
+        \item Suppose that 
+        $$
+        a_i = w^T x_i
+        $$
+        where $a_i$ is the projection of $x_i$ onto $w$.
+        \item The mean of the projection is
+        $$
+        \bar{a} = \frac{1}{n} \sum_{i=1}^n a_i = \frac{1}{n} \sum_{i=1}^n w^T x_i = w^T \bar{x}
+        $$
+        \item The variance of the projection is
+        $$
+        var(a) = \frac{1}{n-1} \sum_{i=1}^n \left(a_i - \bar{a}\right)^2 = \frac{1}{n-1} \sum_{i=1}^n \left(w^T x_i - w^T \bar{x}\right)^2 = \frac{1}{n-1} \sum_{i=1}^n w^T \left(x_i - \bar{x}\right) \left(x_i - \bar{x}\right)^T w = w^T Q w
+        $$
+        The variance in quardratic form.
+        Here $Q$ is the covariance matrix of $x$ by definition.
+        \item It is then maximised using Lagrange multiplier
+        $$
+        \max_w (L = w^T Q w - \gamma \left(w^T w - 1\right))
+        $$
+        and takes derivative with respect to $w$ and set it to 0.
+        \item The optimal solution is 
+        $$
+        Qw = \gamma w
+        $$ 
+        i.e. $w$ is the eigenvector of $Q$, with eigenvalue $\gamma$.
+        \item L then is:
+        $$
+        L = w^T \gamma w - \gamma \left(w^T w - 1\right) = \gamma
+        $$
+        \item which is maximised when $\gamma$ maximised, is the largest eigenvalue of $Q$.
+
+    \end{enumerate}
+    \subsection{Total Variance}
+    \begin{itemize}
+        \item The total variance, V is the sum of the variance of each projection.
+        \item The $i$th eigenvalue accounts for $\lambda_i/V$ of the total variance, where $\lambda_i$ is the $i$th eigenvalue and $V$ is the total variance.
+    \end{itemize}
+    The total variance is the sum of the variance of each projection.
+    \subsection{Information loss}
+    Dimensionality reduction is a trade-off between information loss and computational efficiency. 
+    \subsection{Singular value decomposition}
+    ??
+\section{Non-linear dimensionality reduction}
+\begin{itemize}
+    \item Kernel PCA
+    \item Multidimensional scaling
+    \item Isomap
+    \item t-SNE and UMAP
+\end{itemize}
+\subsection{Multidimensional scaling}
+The ideal of Multidimensional scaling is that it maps high dimensional data into low-dimensional space in a way that preserves the distances between points as much as possible.
+\begin{itemize}
+    \item The distance $o_{ij}$
+    $$
+    o_{i j}=\left\|x_{i}-x_{j}\right\|^{2}
+    $$
+    where $x_i$ is the $i$th data point. Distance such as Euclidean distance, Manhattan distance, etc. can be used.
+    \item The distance $d_{ij}$ is a two dimensional distance between the $i$th and $j$th data point in the low dimensional space.
+    \item The aim is to find the $y_i$ such that $d_ij$:
+    $$
+    d_{i j}=\left\|y_{i}-y_{j}\right\|^{2}
+    $$
+    are as close to $o_{ij}$ as possible.
+    \item The closeness is measured by the stress function:
+    $$
+    \operatorname{stress, S^2}={\frac{\sum_{i<j}\left(d_{i j}-o_{i j}\right)^{2}}{\sum_{i<j} o_{i j}^{2}}}
+    $$
+    \item The stress function is minimised using gradient descent, or other optimisation methods.
+    \item MDS is equivalent to PCA when the distance is Euclidean distance and stress is defined as above.
+    \item Different stress term can be used to emphasis different aspects of the data.
+\end{itemize}
+   
+\section{Decision Tree}
+    A decision tree is a non-parametric method, therefore it does not require data pre-processing.
+    \subsection{Recursive binary partitions}
+        Decision Tree is a tree based method that segment the feature space into simple regions (rectangles in high dimenstional space)
+        It makes prediction using average (mean, mode) of the most common class.
+    \subsection{Characteristic of a decision tree}
+        \begin{itemize}
+            \item branches and internal nodes: represent the decision rules
+            \item leaf nodes (terminal nodes): represent the outcome.
+            \item Decision tree can be trained without rescaling or standardization
+        \end{itemize}
+
+    \subsection{How to grow a tree}
+    \paragraph{}
+    How to grow the tree?
+    \begin{enumerate}
+        \item Partition the predictor space (i.e. all possible values of $X_1, X_2, \ldots, X_p$ ) into $J$ distinct, non-overlapping regions, labelled $R_1, \ldots, R_J$
+        \item  Each observation in a given region $R_f$ is given the same predicted value (or class), which is the mean (or mode) of all response variables in that region
+    \end{enumerate}
+    \paragraph*{Greedy approach - regression}
+    \begin{enumerate}
+        \item At each step, we care about the best partition at the moment without caring about future partitions.
+        \item We stop at each leaf as fewer than a small fixed number of observations
+        \item For one of the predictors $X_j$ with a cutoff threshold $c$, we define two regions:
+            $$
+            R_1(j, c)=\left\{X \mid X_j<c\right\} \text { and } R_2(j, c)=\left\{X \mid X_j \geq c\right\}
+            $$
+        \item An observation $x_i$ is in region $R_1(j, c)$ if $x_i<c$ and in region $R_2(j, c)$ if $x_{i j} \geq c$
+        \item For the first iteration, $R_1(j, c)$ and $R_2(j, c)$ partitions the entire predictor space
+        \item We choose $j$ and $c$ to minimise the residual sum of squares, RSS:
+            $$
+            \sum_{i: x_{i} \in R_{1}(j, c)}\left(y_{i}-\hat{y}_{R_{1}}\right)^{2}+\sum_{i: x_{i} \in R_{2}(j, c)}\left(y_{i}-\hat{y}_{R_{2}}\right)^{2}
+            $$
+        \item We repeat the process for $R_1(j, c)$ and $R_2(j, c)$ until a stopping criterion is reacheds
+    \end{enumerate}
+    \paragraph{Classification}
+    Similarly to regression, classification uses Classification error, Gini index and Cross-entropy to measure the quality of a split, instead of RSS.
+    We use $\hat{p}_{m k}$ to denote the proportion of training observations in the region $R_m(j,c)$are from the $k$th class. 
+    \begin{itemize}
+        \item Classification error: 
+        $$
+        E_m(j,c) = 1 - \max_k(\hat{p}_{m k})
+        $$
+        \item Gini index:
+        $$
+        G_m(j,c) = \sum_{k=1}^K \hat{p}_{m k} (1 - \hat{p}_{m k})
+        $$
+        \item Cross-entropy:
+        $$
+        H_m(j,c) = - \sum_{k=1}^K \hat{p}_{m k} \log \hat{p}_{m k}
+        $$
+    \end{itemize}
+    The total classification error or Gini index is the weighted average of the classification error or Gini index for each region.
+    $$
+    \operatorname{G}(i,c)=\sum_{m=1}^{J} \frac{1}{n_m} G_{m}
+    $$
+    \subsubsection{Example: K= 2 classes}
+    Plot G and E against p, where p is the proportion of class 1 in the region.
+    G and E maximised at p = 0.5. 
+    \begin{enumerate}
+        \item After each partition, new E,
+        $$
+        E = E_1 \times \frac{n_1}{n} + E_2 \times \frac{n_2}{n}
+        $$
+        Or equivalently, G:
+        $$
+        G = G_1 \times \frac{n_1}{n} + G_2 \times \frac{n_2}{n}
+        $$
+        We choose the feature that minimises E or G the most to partition first.
+    \end{enumerate}
+    \subsubsection{Entropy and Information gain}
+    Entropy is a measure of the uncertainty of a random variable, it is defined as:
+    $$
+    H(X)=-\sum_{i=1}^{n} p\left(x_{i}\right) \log p\left(x_{i}\right)
+    $$
+    where $p(x_i)$ is the probability of the $i$th outcome.
+    The information gain is the difference between the entropy before the split and the weighted average of the entropy after the split.
+    $$
+    IG(Y, X_j= x) = H(Y) - H(Y|X_j=x)
+    $$
+    where $S$ is the set of examples, $A$ is the attribute to be tested, $S_v$ is the subset of $S$ for which attribute $A$ has value $v$.
+    $$
+    IG(Y, X_j) = H(Y) - \sum_{x} p(X_j=x) H(Y|X_j=x)
+    $$
+    Here Y is the class label, $X_j$ is the $j$th feature.
+\subsection{Pros and cons}
+\begin{itemize}
+    \item Pros: Tree are interpretable, you can easily read off why model gave a particualr prediction
+    \item Pros: Trees can handle both numerical and categorical data.
+    \item Pros: Trees can handle missing data, using surrogate variables.
+    \item Cons: Trees are unstable, a small change in the data can lead to a large change in the structure of the tree. This can be solved by using ensemble methods.
+\end{itemize}
+\subsection{Size of tree}
+\begin{itemize}
+    \item Small tree are has the risk of under-fitting, i.e. high bias, low variance
+    \item Large tree has the risk of over-fitting, i.e. low bias, high variance
+\end{itemize}
+Interpretation of bias and variance in decision tree: bias comes from the simplifying assumptions made to the model, variance comes from the sensitivity to small changes in the training set.
+\subsubsection{Pruning}
+Pruning is a method to reduce the size of the tree. It is a method to avoid overfitting.
+\begin{enumerate}
+    \item Start with a large tree $T_0$ and with complexity hyperparameter $\alpha$.
+    \item Find the subtree $T \subset T_0$ such that it minimises the cost function:
+    $$
+    sum_{m=1}^{|T|} \sum_{x_i \in R_m} \left(y_i - \hat{y}_{R_m}\right)^2 + \alpha |T|
+    $$
+    where $|T|$ is the number of terminal nodes of $T$m and $R_m$ is the rectangle (region) corresponding to the $m$th terminal node.
+    \item Use cross-validation to choose $\alpha$. We can do it bottom up and top-down.
+    \item $\alpha =0$ means no pruning, $\alpha = \infty$ means the 1 leaf.
+\end{enumerate}
+\subsection{Bagging}
+Bagging is the process of creating multiple models from different subsets of the training data, of the same size, by bootstraping. The final prediction is averaged across (majority vote or average across) the predictions of all of the sub-models.
+\subsection{Random Forest}
+Random forest is an ensemble method that combines multiple decision trees. It is a bagging method with a random selection of features. The final prediction is averaged across the predictions of all of the sub-models.
+\subsection{Boosting}
+Boosting sequentially builds a model by training a decision tree on the residuals of the previous model. The final prediction is the sum of the predictions of all of the sub-models. The parameters include the learning rate, which is the shrinkage factor of the model for the residuals.
+
+\section{K-means}
+K-mean is a clustering method, which is an unsupervised learning method. It is used to group data points into clusters, where the data points in the same cluster are similar to each other, and the data points in different clusters are dissimilar to each other.
+
+K-mean clustering are widely used in pattern recognition, computer vision, etc.
+
+K-mean is similar to k-nearest neighbour.
+
+K-mean is a NP-hard problem, which means that it is computationally expensive to find the optimal solution. Therefore, we use a heuristic approach to find a sub-optimal solution.
+\subsection{Algorithm}
+\subsubsection{Lloyd’s algorithm (naive k-means)}
+Steps of Lloyd’s algorithm:
+\begin{enumerate}
+    \item Initialisation: Randomly assign each data point to one of the $k$ clusters
+    \item Assign each data point to the closest centroid
+    \item Compute the centroid of each cluster
+    \item Repeat steps 2 and 3 until the centroids do not change
+\end{enumerate}
+This algorithm should reduce the within-cluster sum of squares (WCSS) at each iteration.
+\subsubsection{K-means alternatives}
+\begin{itemize}
+    \item K-median: use the median instead of the mean to compute the centroid
+    \item K-medoids: use the most central point in the cluster as the centroid
+    \item Manhattan distance: use Manhattan distance instead of Euclidean distance to compute the distance between a data point and a centroid (i.e. $d(x, y)=\sum_{i=1}^{n}\left|x_{i}-y_{i}\right|$)
+\end{itemize}
+\subsubsection{Initialisation}
+There are serveral ways to initialise the centroids:
+\begin{itemize}
+    \item Random partition: Randomly assign each data point to one of the $k$ clusters
+    \item Forgy: Randomly select $k$ data points as the initial centroids
+    \item K-means++: select the first centroid randomly, then select the next centroid from the remaining data points with a probability proportional to the distance from the previous centroid
+\end{itemize}
+
+\subsection{Fuzzy k-means}
+\begin{enumerate}
+    \item Multiple cluster assignment: $x_i$ has cluster assignment $w_{i k}$, with $w_{i k}^{-1}=\sum_{j=1}^K\left(\frac{\left\|x_i-c_k\right\|}{\left\|x_i-c_j\right\|}\right)^{\frac{2}{m-1}}$
+    \item Centroid update
+- New cluster centroids are $c_k=\frac{\sum_{i=1}^n w_{i k}^m x_i}{\sum_{i=1}^n w_{i k}^m}$
+- This minimises the weighted mean squared error $E=\sum_{i=1}^n \sum_{k=1}^K w_{i k}^m\left\|x_i-c_k\right\|^2$
+- $m$ is a fuzziness hyper parameter
+\end{enumerate}
+
+
+
+\section{Clustering}
+\subsection{Clustering evaluation}
+\begin{enumerate}
+    \item Internal evaluation: Optimising a function over clusters doesn’t necessarily mean that the clusters are good
+    \item A internal criterion involves measuring the similarity between data observations within the same cluster and the dissimilarity between data observations from different clusters
+    \item External evaluation: Requires true label which is not always available 
+\end{enumerate}
+\subsubsection{Silhouette score}
+\begin{itemize}
+    \item $$
+    a_i=\frac{1}{\left|C_i\right|-1} \sum_{j \in C_i, i \neq j} d(i, j), 
+    $$
+    \item $b_i$ is the minimum (amongst all other clusters) average distance to the points in cluster $C_j$ to which $i$ does not belong:
+    $$
+    \quad b_i=\min _{j \neq i} \frac{1}{\left|C_j\right|} \sum_{k \in C_j} d(i, k)
+    $$
+    where $d(i, j)$ is the distance between $i$th and $j$th data point. $C_i$ is the cluster that the $i$th data point belongs to. $|C_i|$ is the number of data points in cluster $C_i$.
+    \item The silhouette score is then:
+    $$
+    s(i)=\frac{b(i)-a(i)}{\max \left\{a(i), b(i)\right\}}
+    $$
+    The overall silhouette score is the average of the silhouette score of all data points.
+    $$
+    s=\frac{1}{n} \sum_{i=1}^{n} s(i)
+    $$
+    \item The silhouette score is between -1 and 1. The higher the score, the better the clustering.
+\end{itemize}
+\subsubsection{Other evaluation metrics}
+\begin{itemize}
+    \item Elbow method: plot the within-cluster sum of squares (WCSS) against the number of clusters. The optimal number of clusters is the number of clusters after which the WCSS does not decrease significantly.
+    \item Information criteria: AIC, BIC, etc.
+    \item Gap statistic: compare the within-cluster sum of squares (WCSS) of the data to the WCSS of the data generated from a uniform distribution.
+    \item 
+\end{itemize}
+\subsection{Issues with clustering}
+\begin{itemize}
+    \item clustering is very sensitive to choices that you make, i.e. hyperparameters, choice of distance matrix.
+    \item calculate pairwise distance is computationally expensive
+    \item interpretation of clusters is subjective
+    \item hard clustering is not robust to outliers, i.e. since all data points are assigned to a cluster, outliers can affect the cluster centroid.
+    \item very unstable to small changes in the data
+    \item in high dimensional space, the distance between data points becomes less meaningful, i.e. the curse of dimensionality. There is not much difference in Euclidean space between two data points.
+\end{itemize}
+
+\subsection{Types of clustering}
+\begin{itemize}
+    \item Hard vs soft clustering
+    \item Hierarchical vs non-Hierarchical clustering
+    \item Agglomerative vs partitioning/divisive
+    \item Centroid vs distribution-based vs density vs graph-based vs spectral. Examples include k-means, Gaussian mixture models, DBSCAN, etc.
+\end{itemize}
+
+\subsection{Various types of clustering}
+\begin{align*}
+\begin{array}{|c|c|c|c|}
+\hline & \text { Cluster types } & \text { Method } & \begin{array}{c}
+\text { Fixed number of } \\
+\text { clusters }
+\end{array} \\
+\hline \text { k-means } & \text { Hard } & \text { Partitioning } & \text { Yes } \\
+\hline \text { Fuzzy c-means } & \text { Soft } & \text { Partitioning } & \text { Yes } \\
+\hline \text { Hierarchical } & \text { Hard } & \text { Agglomerative } & \text { No } \\
+\hline \begin{array}{c}
+\text { Gaussian mixture } \\
+\text { models }
+\end{array} & \text { Soft } & \text { Partitioning } & \text { Yes } \\
+\hline \begin{array}{c}
+\text { Density-based }
+\end{array} & \text { Hard } & \text { Agglomerative } & \text { No } \\
+\hline \text { Graph-based } & \text { Hard } & \text { Partitioning } & \text { Yes } \\
+\hline \text { Spectral } & \text { Hard } & \text { Partitioning } & \text { Yes } \\
+\hline
+\end{array}
+\end{align*}
+
+\section{GMM}
+\subsection{Self-organising maps(non-examinable)}
+Self organising map is a dimensionality reduction technique.
+It distort the data space to a 2D space, while preseving the grid structure.
+\subsection{Generative Modelling}
+We assume that the data is generated from a mixture of Gaussian distribution. Each point is generated from one or more of the Gaussian distribution.
+\subsubsection{Latent variable}
+We introduce a latent variable $z$ to indicate which Gaussian distribution the data point is generated from.
+$$
+p(x, z)=p(x | z) p(z)
+$$
+In more general case with $\theta$
+$$
+p(x, z | \theta)=p(x | z, \theta) p(z | \theta)
+$$
+Given that we do not know $z$, we can marginalise it out:
+$$
+p(x | \theta)=\sum_{z} p(x, z | \theta)=\sum_{z} p(x | z, \theta) p(z | \theta)
+$$
+In the case that $z$ is discrete, we can use the sum. Assuming $z$ is discrete, and $z$ can be 1,2,3 .. K, we can write:
+$$
+p(x | \theta)=\sum_{k=1}^K p(x | z=k, \theta) p(z=k | \theta)
+$$
+\subsection{Gaussian Mixture Model}
+Gaussian mixture model, is defined as:
+$$
+p(x | \theta)=\sum_{k=1}^K \phi_k f\left(x | \mu_k, \Sigma_k\right)
+$$
+where $\phi_k$ is the mixing coefficient, $\mu_k$ is the mean, $\Sigma_k$ is the covariance matrix, and $f$ is the Gaussian distribution.
+The full parameter space is then:
+$$
+\theta=\left\{\phi_1, \ldots, \phi_K, \mu_1, \ldots, \mu_K, \Sigma_1, \ldots, \Sigma_K\right\}
+$$
+Note that $\sum_{k=1}^K \phi_k = 1$.
+This is related to the latent variable model by:
+$$
+\phi_k=p(z=k | \theta)
+$$
+\subsubsection{Expectation Maximisation}
+We want to find the maximum likelihood estimate of $\theta$. However, there is latent variable $z$ that we do not know.
+Therefore, we use the expectation maximisation algorithm to find the maximum likelihood estimate of $\theta$.
+\begin{enumerate}
+    \item Expectation: compute the posterior probability of $z$ given $x$ and $\theta$:
+    $$
+    q_{ik}=\frac{\phi_k f\left(x_i | \mu_k, \Sigma_k\right)}{\sum_{j=1}^K \phi_j f\left(x_i | \mu_j, \Sigma_j\right)}
+    $$
+    \item Maximisation: maximise the expected log likelihood with respect to $\theta$:
+    $$
+    \theta^{(t+1)}=\arg \max _\theta \sum_{i=1}^n \sum_{k=1}^K q_{i k}^{(t)} \log \left(\frac{p\left(x_i, z_i=k \mid \theta\right)}{q_{i k}^{(t)}}\right)
+    $$
+\end{enumerate}
+Here we used the Jensen's inequality:
+$$
+\sum_{i=1}^n \log \left(\sum_{k=1}^K q_{i k} \frac{p\left(x_i, z_i=k \mid \theta\right)}{q_{i k}}\right) \geq \sum_{i=1}^n \sum_{k=1}^K q_{i k} \log \left(\frac{p\left(x_i, z_i=k \mid \theta\right)}{q_{i k}}\right)
+$$
+
+\section{Spectral Clustering}
+Spectral clustering is a graph-based clustering method
+\begin{itemize}
+    \item Diagonal matrix $D$ is the degree matrix, where 
+    $$
+    D_{i i} = deg(i) = \sum_{j=1}^n W_{i j}
+    $$
+    which is the value of number of edges connected to node $i$.
+    \item Adjacency matrix $A$ is the matrix of connections between nodes, where
+    $$
+    A_{i j} = \begin{cases} 1, & \text{if there is an edge between node $i$ and node $j$} \\ 0, & \text{otherwise} \end{cases}
+    $$
+    \item The Laplacian matrix $L$ is defined as:
+    $$
+    L = D - A
+    $$
+    \item $L$ is positive semi-definite, and has $n$ non-negative real eigenvalues $0 = \lambda_1 \leq \lambda_2 \leq \ldots \leq \lambda_n$.  
+    ...
+\end{itemize}
+
+\section{DBSCAN}
+DBSCAN stands for density-based spatial clustering of applications with noise. 
+\begin{itemize}
+    \item Parameters: minPts and $\epsilon$ (the radius of a neighbourhood around each point)
+    \item $p$ is a core point if there are at least minPts within the $\epsilon$ neighbourhood around $p$
+    \item $q$ is directly reachable from $p$ if $q$ is within the $\epsilon$ neighbourhood around the core point $p$. If $q$ is not a core point itself, it is a border point
+    \item $q$ is reachable from $p$ if there is a path $p_1, \ldots, p_n$ of core points where each $p_{k+1}$ is directly reachable from $p_k$
+    \item All other points are outliers
+\end{itemize}
+
+
+\subsection{Pros and cons}
+\begin{itemize}
+    \item Pros: DBSCAN can find clusters of any shape, and it can also identify outliers.
+    \item Pros: DBSCAN is a non-parametric method, which means that it does not require data pre-processing.
+    \item Pros: DBSCAN can also identify outliers.s
+    \item Cons: DBSCAN is very sensitive to the choice of $\epsilon$ and $minPts$.
+    \item Cons: DBSCAN is very sensitive to the choice of distance metric.
+    \item 
+\end{itemize}
+It is a density-based clustering method, which means that it can find clusters of any shape, and it can also identify outliers. It is also a non-parametric method, which means that it does not require data pre-processing.
+It has two parameters: $\epsilon$ and $minPts$. $\epsilon$ is the radius of the circle to be created around each data point to check the density . $minPts$ is the minimum number of points in a neighbourhood to be considered as a core point.
+
+\end{document}

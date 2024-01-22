@@ -1,0 +1,38 @@
+\author{Xinyu Zhong\\Queens' College}
+\usepackage{physics, amsmath}
+\usepackage{xcolor}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{parskip}
+\usepackage{adjustbox}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\pagestyle{fancyplain}
+\fancyhf{}
+
+%\date{2nd Nov 2021}
+\graphicspath{Images/}
+
+\lhead{\fancyplain{}{Zachary Zhong, xz447@cam.ac.uk}}
+\rhead{\fancyplain{}{\topic}}
+\cfoot{\fancyplain{}{\thepage{}} }
+\setlength{\headheight}{40pt}
+
+\newcommand{\definition}[3]
+    {
+    \textit{#1: }
+    \begin{align}
+        #2
+    \end{align}
+    {#3\\}
+    }
+\newcommand{\theorem}[2]{
+    \textbf{\textit{#1:}}
+    \begin{center}
+        {#2}
+    \end{center}
+    }
+\newcommand{\example}[2]{\textbf{Example: #1}\\\textcolor{blue}{#2}}
+\newcommand{\note}[1]{\underline{\textbf{\textcolor{red}{#1:}}}}
+\title{\topic}

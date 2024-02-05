@@ -1,0 +1,38 @@
+
+what is difference between f and y 
+y is a noised up version of f : y = f + noise
+
+does f centered at 0 means that y is also centered at 0?
+This is only the prior, not the posterior
+
+In the paper, what is the difference between u and u_hat, what is the difference between N and M
+u_hat is choosen from z_m, u is choosen from z_n, M is a subset of N???
+
+
+What is the prior, likelihood and posterior in GP
+
+Optimization failed, try increasing max_iters or using a different optimiser.(What is the optimiser and why there is iteration)
+
+equation 6,7,8
+
+There is no chance that in real life we can apply the complete GP, because we don't know the true function.
+If we know, there would not be necessary to do the GP.
+
+Is kernel a function of data or entire dataspace
+Kernel is a function of data, it has the dimension of (N,N) where N is the number of data points
+
+What is the time complexity of GP?
+O(N^3) or O(N^2) depending on the implementation? The time-consuming step is the inversion of the kernel matrix??
+No it is always O(N^3) because the inversion of the matrix is O(N^3) and decomposition is O(N^3)            
+
+How to implement the differential equation in to Kernel in GP Jax
+See more about how to marginalise out f 
+KL divergence and ELBO
+
+Is the addition of the derivative terms equivalent as add other terms and a regularisation term in the kernel?
+
+What is data likelihood and model likelihood
+
+what is latent force 
+
+what is kernel differentiation

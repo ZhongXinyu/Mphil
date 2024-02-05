@@ -1,0 +1,3 @@
+[submodule "02Applied_Machine_Learning/m2_application_of_machine_learning"]
+	path = 02Applied_Machine_Learning/m2_application_of_machine_learning
+	url = git@gitlab.developers.cam.ac.uk:phy/data-intensive-science-mphil/m2_application_of_machine_learning.git

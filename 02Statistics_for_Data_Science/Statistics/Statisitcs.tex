@@ -1,0 +1,631 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{import}
+\usepackage{amssymb}
+\import{../../00Notes_and_Summaries/Template/}{format.tex}
+
+\newcommand{\topic}{Statistics}
+
+\begin{document}
+
+\title{\topic}
+\begin{titlepage}
+    \maketitle
+\end{titlepage}
+
+\tableofcontents
+
+\newpage
+\begin{abstract}
+\noindent
+\end{abstract}
+
+\section{Bayesian Statistics}
+\subsection{Likelihood Function}
+\begin{definition}
+    {Likelihood is the probability of the data given the parameters.}
+    {L({X}|\theta) = \prod_{i=1}^{n} f(x_i|\theta)}
+    {It is a function of $\theta$.}
+\end{definition}
+
+\example{Sky survey path area of sky, count all starts above certain brightness threshold}
+{Data $n$, representing the number of stars in an area, is discrete and follows a Poisson distribution:\\
+$$
+    f(n|s) = \frac{(As)^n e^{-As}}{n!}
+$$
+Here $s$ is the number density of the stars, and $A$ is the area of the sky.\\
+}
+\subsection{Conditional Probability}
+\begin{definition}
+    {Conditional probability is the probability of an event given that another event has occurred.}
+    {P(A|B) = \frac{P(A \cap B)}{P(B)}}
+    {}
+\end{definition}
+Now replace $A$ with model, $\mathcal{M}$ and $B$ with data, $\mathcal{D}$:
+$$
+    P(\mathcal{M}|\mathcal{D}) = \frac{P(\mathcal{D}|\mathcal{M})P(\mathcal{M})}{P(\mathcal{D})}
+$$
+Here:
+\begin{enumerate}
+    \item $P(\mathcal{M}|\mathcal{D})$ is the posterior probability, which is the probability of the model given the data.
+    \item $P(\mathcal{D}|\mathcal{M})$ is the likelihood function, which is the probability of the data given the model.
+    \item $P(\mathcal{M})$ is the prior probability, which is the probability of the model.
+    \item $P(\mathcal{D})$ is the evidence, which is the probability of the data.
+    \item The evidence is the normalisation constant, which is the probability of the data averaged over all possible models.
+\end{enumerate}
+Now rewrite the notation to avoid confusion:\\
+\begin{enumerate}
+    \item Likelihood:
+    $$
+        P(\mathcal{D}|\mathcal{M}) \equiv \mathcal{L}(\mathcal{D}|\mathcal{M}) \equiv \mathcal{L}(x|\theta)
+    $$
+    \item Prior:
+    $$
+        P(\mathcal{M}) \equiv \pi(\mathcal{M}) \equiv \pi(\theta)
+    $$
+    \item Posterior:
+    $$
+        P(\mathcal{M}|\mathcal{D}) \equiv \mathcal{P}(\mathcal{M}|\mathcal{D}) \equiv \mathcal{P}(\theta|x)
+    $$
+    \item Evidence:
+    $$
+        P(\mathcal{D}) \equiv \mathcal{Z}
+    $$
+\end{enumerate}
+\subsection{Selection of Prior}
+To start a Bayesian analysis, we need to choose a prior. There are many ways to do so. We can choose prior based on the physical symmetry or easiness of analytical calculation.\\
+\subsubsection{Uniform Prior}
+\begin{definition}
+    {Uniform prior is a prior that is constant.}
+    {\pi(s) = \begin{cases}
+        1/S_{max} & \text{if } 0 \leq s \leq S_{max} \\
+        0 & \text{otherwise}
+    \end{cases}}
+    {This prior is translational invariant.}
+\end{definition}
+\subsubsection{Jeffreys Prior}
+\begin{definition}
+    {Jeffreys prior is a prior that is invariant under reparameterisation(scaling of parameters).}
+    {\pi(s) = \frac{1}{\log(\frac{S_{max}}{{S_{min}}})}\begin{cases}
+        1/S & \text{if } S_{min} \leq s \leq S_{max} \\
+        0 & \text{otherwise}
+    \end{cases}
+    }
+    {T prior is scaling invariant, i.e. $$\pi(s) ds= \pi(\alpha s) d(\alpha s)$$}
+\end{definition}
+\subsubsection{Conjugate Prior}
+\begin{definition}
+    {Conjugate prior is a prior that is chosen to be the same form as the posterior.}
+    {\pi(s,k, \theta) = \frac{s^{k-1} e^{-s/\theta}}{\theta^k \Gamma(k)}}
+    {This is one particular example of conjugate prior, for likelihood that follows the Poisson distribution.}
+\end{definition}
+In the example of the sky survey, the likelihood is a Poisson distribution:
+$$
+    \mathcal{L}(n|s) = \frac{(As)^n e^{-As}}{n!}
+$$
+
+The conjugate prior of Poisson distribution is the Gamma distribution:
+$$
+    \pi(s,k, \theta) = \frac{s^{k-1} e^{-s/\theta}}{\theta^k \Gamma(k)}
+$$
+This gives the posterior:
+$$
+    \mathcal{P}(s|n,k',\theta') = \frac{s^{k'-1} e^{-s/\theta'}}{\theta'^{k'} \Gamma(k')}
+$$
+where $k' = k + n$ and $\theta' = \frac{\theta}{A\theta +1}$.
+This can be done iteratively, i.e. we can use the posterior as the prior for the next iteration. Then the new parameters in the posterior will be 
+$$k' = k + n_1 + n_2 + ...$$ 
+and 
+$$\theta' = \frac{\theta}{(A_1 + A_2 + ...)\theta +1}$$
+When the number of data points, $N$, is large, $$
+k_N \rightarrow \sum^N_1{n}$$
+and 
+$$\theta_N \rightarrow \frac{1}{\sum^N_1{A}}$$
+the choice of first parameters becomes unimportant. i.e. the posterior will converge to the same value regardless of the choice of the first prior. As $N \rightarrow \infty$ The new posterior is a Gamma distribution with a narrower peak that is almost a delta function.
+
+\section{Fisher Information}
+\subsection{Score}
+\begin{definition}
+    {Score is the derivative of the log likelihood function with respect to the parameter.}
+    {S(\theta) = \frac{d}{d\theta} \log \mathcal{L}(x|\theta)}
+    {A good quality estimator?}
+\end{definition}
+The expected value of the score is zero:
+$$
+    E_x[S(\theta)] = \langle S(\theta) \rangle = 0
+$$
+Proof:
+\begin{align*}
+    \langle S(\theta) \rangle &= \int S(\theta) \mathcal{L}(x|\theta) dx \\
+    &= \int \frac{d}{d\theta} \log \mathcal{L}(x|\theta) \mathcal{L}(x|\theta) dx \\
+    &= \int \frac{1}{\mathcal{L}(x|\theta)} \frac{d}{d\theta} \mathcal{L}(x|\theta) \mathcal{L}(x|\theta) dx \\
+    &= \int \frac{d}{d\theta} \mathcal{L}(x|\theta) dx \\
+    &= \frac{d}{d\theta} \int \mathcal{L}(x|\theta) dx \\
+    &= \frac{d}{d\theta} 1 \\
+    &= 0
+\end{align*}
+\subsection{Fisher Information}
+\begin{definition}
+    {Fisher information is the variance of the score.}
+    {I(\theta) = \langle S(\theta)^2 \rangle = \int S(\theta)^2 \mathcal{L}(x|\theta) dx}
+    {A good quality estimator should have a high Fisher information.}
+\end{definition}
+
+Note that information is not invariant under reparameterisation. For example, if we have a parameter $s$ and we change it to $\theta = \log s$, then the Fisher information will change:
+$$
+    I(\phi) = I(\theta) \left(\frac{d\theta}{d\phi}\right)^2
+$$
+
+Usually, the Fisher information is expressed in a matrix form:
+\begin{align*}
+    I_{ij} 
+    & = -\int dx [\frac{\partial^2}{\partial \theta_{i}\partial \theta_{j}}\mathcal{L}(x|\theta)] \mathcal{L}(x|\theta) \\
+\end{align*}
+\section{Which survey is better?}
+Now we have two surveys, survey 1 and survey 2. Survey 2 has a larger area, but a lower sensitivity. We want to know which survey is better.\\
+\paragraph{Survey 1}
+\begin{itemize}
+    \item Area: $A_1$
+    \item Random variable: $s1$
+    \item Number of stars: $n_1 \sim$ Poisson($A_1s_1$)
+    \item Likelihood: $\mathcal{L}_1(n_1|s_1) = \frac{(A_1s_1)^{n_1} e^{-A_1s_1}}{n_1!}$
+    \item Fisher information: $I_1(s_1) = \frac{1}{s_1}$
+\end{itemize}
+
+\paragraph{Survey 2}
+\begin{itemize}
+    \item Area: $A_2$
+    \item Random variable: $s_2$
+    \item Number of stars: $n_1 \sim$ Poisson($A_2s_2$)
+    \item Number of stars that was detected: $n_2 \sim$ Binomial($m$, $p$)
+    \item Likelihood: 
+    \begin{align*}
+        \mathcal{L}_2(n_1, n_2|s_2) &= \sum^{\infty}_{m=n_2}P(n_2|m)P(m|s)\\
+        &= \sum^{\infty}_{m=n_2}\binom{m}{n_2}p^{n_2}(1-p)^{m-n_2}\frac{(A_2s_2)^m e^{-A_2s_2}}{m!}\\
+        &= \dots\\
+        &= \frac{(A_2s_2)^{n_2} e^{-A_2ps_2}}{n_2!}
+    \end{align*}
+    which is another Poisson distribution with $A_2ps_2$ as the parameter.
+    $$
+        \mathcal{L}_2(n_2|s) = \frac{(A_2ps)^{n_2} e^{-A_2ps}}{n_2!}
+    $$
+    \item Fisher information: $I_2(s_2) = \frac{A_2p}{s_2}$
+\end{itemize}
+To compare whether survey 1 or survey 2 is better, we need to compare the Fisher information of the two surveys.\\
+\section{Post-Posterior}
+In 
+
+\section{Sampling methods}
+The two sampling methods covered are the Metropolis-Hastings algorithm and the Gibbs sampling algorithm. Before the two algorithms are introduced, we discussed the Markov Chain and the detailed balance condition.
+\subsection{Markov Chain}
+\begin{definition}
+    {Markov chain is a stochastic process that satisfies the Markov property.}
+    {P(X_{n+1} = x | X_1 = x_1, X_2 = x_2, ..., X_n = x_n) = P(X_{n+1} = x | X_n = x_n)}
+    {The probability of the next state only depends on the current state.}
+\end{definition}
+
+\subsubsection{Time homogeneous Markov Chain}
+\begin{definition}
+    {Time homogeneous Markov chain is a Markov chain that the transition probability is independent of time.}
+    {P(X_{n+1} = x | X_n = x_n) = P(X_{n+1} = x | X_n = x_n, X_{n-1} = x_{n-1}, ..., X_1 = x_1)}
+    {The probability of the next state only depends on the current state.}
+\end{definition}
+
+\subsubsection{Auto-correlation}
+In the context of Markov chain, the auto-correlation is the correlation of the state at time $t$ with the state at time $t+\tau$.\\
+A very long auto-correlation time means that the Markov chain is not efficient, it brings problem of slow convergence and in-efficient sampling.\\
+A very short auto-correlation is usually preferred.
+The problem of slow convergence can be explored to solve by reparametrisation of the model such that the shape of the PDF has is variance along a certain direction.\\
+
+\subsubsection{Stationary Distribution}
+\begin{definition}
+    {Stationary distribution is a distribution that does not change over time.}
+    {\pi(x) = \int \pi(x')\rho(x,x') dx'}
+    {The probability of being in state $x$ is the same as the probability of being in state $x'$.}
+\end{definition}
+\subsubsection{Detailed Balance condition}
+\begin{definition}
+    {Detailed balance condition is a condition that the probability of transitioning from state $i$ to state $j$ is the same as the probability of transitioning from state $j$ to state $i$.}
+    {\pi(x)\rho(x',x) = \pi(x')\rho(x,x')}
+    {The satisfaction of D.B. condition is a sufficient condition for the Markov chain to have a stationary distribution.}
+\end{definition}
+To demonstrate that D.B. condition satisfies stationary MC, we integrate both sides of the equation with respect to $x'$:
+\begin{align*}
+    \int \pi(x)\rho(x',x) dx' &= \int \pi(x')\rho(x,x') dx' \\
+    \pi(x) &= \int \pi(x')\rho(x,x') dx'
+\end{align*}
+
+
+\subsection{Metroplis-Hastings Algorithm}
+\begin{definition}
+    {Proposed distribution}
+    {Q(x'|x)}
+    {It is a distribution that is used to propose a new state, usually a Gaussian distribution. It is then rejected or accepted based on the acceptance probability.}
+\end{definition}
+\\
+\begin{definition}
+    {Acceptance probability}
+    {a(x,y) = \min\left(1, \frac{P(y)Q(x|y)}{P(x)Q(y|x)}\right)}
+    {It is the probability of accepting the new state. It can be thought as the ratio of the flux of traveling from 1 state to another.
+    The probabilistic rule for accepting/rejecting proposed points, is designed such that the resulting Markov chain satisfies detailed balance with $\pi = p$.}
+\end{definition}
+
+\begin{algorithm}
+\caption{Metropolis-Hastings Algorithm}\label{metropolis_hastings}
+\begin{algorithmic}[1]
+\State $x_0 \sim \alpha$ \Comment{Initialization}
+\State $i \leftarrow 0$ \Comment{Iteration index}
+\While{$i \geq 0$} \Comment{Iterate $i=0,1,2, \ldots$}
+    \State $y \sim Q(y \mid x_i)$ \Comment{Proposal}
+    \State $a \leftarrow \frac{P(y)Q(x_i \mid y)}{P(x_i)Q(y \mid x_i)}$ \Comment{MH acceptance probability}
+    \State $u \sim \mathcal{U}(0,1)$ \Comment{Uniform random number}
+    \If{$u < a$}
+        \State $x_{i+1} \leftarrow y$ \Comment{Markov transition (accept)}
+    \Else
+        \State $x_{i+1} \leftarrow x_i$ \Comment{Markov transition (reject)}
+    \EndIf
+    \State $i \leftarrow i+1$
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+We only accept the new state with a probability of $a$. The acceptance probability is the ratio of the target distribution and the proposal distribution.\\
+$$
+a(x,y) = \min\left(1, \frac{P(y)Q(x|y)}{P(x)Q(y|x)}\right)
+$$
+\subsubsection{D.B. condition in Metropolis-Hastings Algorithm}
+Now, we prove that the Metropolis-Hastings algorithm satisfies the detailed balance condition, and hence has a stationary distribution.\\
+Recall the detailed balance condition:
+$$
+\pi(x)\rho(x',x) = \pi(x')\rho(x,x')
+$$
+LHS of the equation is
+$$
+\pi(x)\rho(x',x) = \pi(x)Q(x'|x)
+$$
+RHS of the equation is
+\begin{align*}
+    \pi(x')\rho(x,x') &= \pi(x')Q(x'|x)\\
+    & = \pi(x')()\\
+    & = p(x)Q(x'|x)\\
+\end{align*}
+\subsubsection{Enhancement of Metropolis-Hastings Algorithm}
+\paragraph*{Choice of proposal distribution}
+A bad choice of proposal distribution can lead to a very long time of convergence. The MH algorithm generally works best if the proposal closely matches the target distribution. For example in 2D, we can choose a proposal distribution that is a Gaussian distribution with a covariance matrix that is the same as the covariance matrix of the target distribution.\\
+A few choices for the proposal distribution are:
+\begin{align}
+\boldsymbol{\Sigma}_{\text {Small }}=\left(\begin{array}{cc}
+0.05 & 0 \\
+0 & 0.05
+\end{array}\right), \quad \boldsymbol{\Sigma}_{\text {Large }}=\left(\begin{array}{cc}
+1.5 & 0 \\
+0 & 1.5
+\end{array}\right), \quad \text { and } \quad \boldsymbol{\Sigma}_{\text {Corr }}=\left(\begin{array}{ll}
+1 & \beta \\
+\beta & 1
+\end{array}\right)
+\end{align}
+\begin{enumerate}
+    \item A smaller covariance matrix will lead to a smaller step size, which will lead to a longer auto-correlation time.
+    \item A large covariance matrix will lead to a larger step size, which will make the algorithm less efficient, as rejection rate will be higher.
+    \item A correlated covariance matrix that is close to the true covariance matrix will lead to a more efficient algorithm. However, this requires prior knowledge of the covariance matrix.
+\end{enumerate}
+
+\subsection{Gibbs Sampling}
+The algorithm that turns the N-dimensional problem into 1-dimensional problems.\\
+\subsubsection{1D Conditional Probability}
+Given that
+$$
+p(\vb{x}) = p(x_1, x_2, ..., x_d) 
+$$
+The 1-dimensional conditional probability is
+$$
+p(x_i|x_1, x_2, ..., x_{i-1}, x_{i+1}, ..., x_d)
+$$
+or 
+$$
+p(x^k|x^{-k})
+$$
+To evaluate the normalised conditional probability, we can use the Bayes' theorem:
+$$
+p(x^k|k^{-1}) = \frac{P(\vb{x})}{\int P(x^1,...,x^{k-1},y^k,x^{k+1}...,x^d) dy^k}
+$$
+\subsubsection{Gibbs Sampling Algorithm}
+Each time, 1 component of the vector is updated. The algorithm is as follows:
+\begin{enumerate}
+    \item Start with an initial guess of the vector $\vb{x}$
+    \item Randomly choose a component $x^k$
+    \item Update $x^k$ using the conditional probability $p(x^k|x^{-k})$
+    \item Repeat step 2 and 3 for a large number of times
+\end{enumerate}
+\subsubsection{Example}
+Given a 2D distribution:
+$$
+p(x,y) \propto ye^{-xy-y}
+$$
+The conditional probability of $x$ given $y$ is
+$$
+p(x|y) \propto e^{-yx}
+$$
+The conditional probability of $y$ given $x$ is
+$$
+p(y|x) \propto ye^{-(x+1)y}
+$$
+\subsubsection{DB condition in Gibbs Sampling}
+The probability defined in Gibbs sampling is:
+$$
+p(y|x) = \rho(y,x) = w_k \delta^{d-1}(x^{-k} - y^{-k})P(y^k|x^{-k})
+$$
+and 
+$$
+p(x|y) = \rho(x,y) = w_k \delta^{d-1}(y^{-k} - x^{-k})P(x^k|y^{-k})
+$$
+where $w_k$ is the normalisation constant ?? .\\
+Recall the detailed balance condition:
+$$
+\pi(x)\rho(x',x) = \pi(x')\rho(x,x')
+$$
+LHS of the equation is
+\begin{align*}
+    \pi(x)\rho(x',x) &= \pi(x)w_k \delta^{d-1}(x^{-k} - x'^{-k})P(x'^k|x^{-k}) \\
+    &= p(x^k|x^{-k})p(x^{-k})w_k \delta^{d-1}(x^{-k} - x'^{-k})P(x'^k|x^{-k}) \\
+\end{align*}
+RHS of the equation is
+\begin{align*}
+    \pi(x')\rho(x,x') &= \pi(x')w_k \delta^{d-1}(x^{-k} - x'^{-k})P(x^k|x'^{-k}) \\
+    &= p(x'^k|x^{-k})p(x^{-k})w_k \delta^{d-1}(x^{-k} - x'^{-k})P(x^k|x'^{-k}) \\
+\end{align*}
+Given that the property of the delta function that LHS and RHS are non-zero only when $x^k = x'^k$, we see that the detailed balance condition is satisfied.\\
+\subsubsection{Problem of Gibbs Sampling}
+The problem of Gibbs sampling is that it is slow to converge.
+
+\subsubsection{Alternatives to Gibbs Sampling: Gibbs Sweep}
+The Gibbs sweep is a method that updates all the components of the vector at once. The algorithm is as follows:
+\begin{enumerate}
+    \item Start with an initial guess of the vector $\vb{x}$
+    \item Start for $k = 1$ to $d$
+    \item Update $x^k$ using the conditional probability $p(x^k|x^{-k})$, where $x^{-k}$ is the vector without the $k$-th component. Use the updated $x^k$ for the next iteration.
+    \item Repeat step 2 and 3 for all components of the vector
+\end{enumerate}
+Problem of this method is that it does not satisfy the detailed balance condition.\\
+
+\subsection{Hamiltonian Monte Carlo}
+
+\subsubsection{Momentum P}
+For momentum P, we introduce a new distribution(which can be chosen arbitrarily) that is independent of the position x. The distribution is usually chosen to be a Gaussian distribution:
+$$
+    Q(p) \sim \mathcal{N}(0,M)
+$$
+where $M$ is the mass matrix, which is symmetric positive definite.\\
+$$
+    \log Q(p) = - k(p) + const.
+$$
+where $k(p)$ is the kinetic energy.\\
+For a Gaussian distribution, the kinetic energy is
+$$
+    k(p) = \frac{1}{2}p^TM^{-1}p
+$$
+
+
+We define $R(x,p)$ such that:
+$$
+    \log R(x,p) = -H(x,p)
+$$
+where
+$$
+    H(x,p) = U(x) + k(p)
+$$
+is the Hamiltonian, which is the sum of the potential energy $U(x)$ and the kinetic energy $k(p)$.\\
+
+The target distribution is uncovered by the marginalisation of the joint distribution: 
+$$
+    P(x) = \int R(x,p) dp
+$$
+Note a few conditional probabilities:
+\begin{align*}
+    x,p &\sim R(x,p)\\
+    x|p &\sim P(x|p)\\
+    p|x &\sim Q(p|x)\\
+\end{align*}
+
+HMC introduces a fictitious parameter $t$. The position $x(t)$ and the momentum $p(t)$ are functions of time and evolves according to the Hamiltonian equations of motion:
+\begin{align*}
+    \frac{dx(t)}{dt} &= \frac{\partial H}{\partial p} = M^{-1}p\\
+    \frac{dp(t)}{dt} &= -\frac{\partial H}{\partial x} = -\nabla U(x)
+\end{align*}
+
+Hence, these equations defines a map from states at time $t$ to states at time $t+s$:
+$$
+    T_s : (x(t),p(t)) \rightarrow (x(t+s),p(t+s))
+$$
+
+\subsubsection{LeapFrog Algorithm}
+Leapfrog algorithm is a numerical method to evolve the Hamiltonian equations of motion. It is a second order symplectic integrator.\\
+
+\begin{algorithm}
+\caption{Leapfrog Step}
+\begin{algorithmic}[1]
+\Procedure{LEAPFROG}{$x, p, \Delta t, M$}
+    \State $p \gets p - \frac{1}{2} \Delta t \nabla|_x E(x)$ \Comment{Half step for momentum}
+    \State $x \gets x + \Delta t M^{-1} \cdot p$ \Comment{Full step for position}
+    \State $p \gets p - \frac{1}{2} \Delta t \nabla|_x E(x)$ \Comment{Half step for momentum}
+    \State \textbf{return} $x, p$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Time-Reversibility,Volume-Preserving and Energy Conservation}
+The choice of the leapfrog algorithm is to ensure that it is time reversible and volume preserving.\\
+
+Energy conservation is not guaranteed, but the error is bounded with order of $\Delta t^2$ .\\
+$$
+\mathcal{H}(x(t+s),p(t+s)) - \mathcal{H}(x(t),p(t)) = \mathcal{O}(\Delta t^2) 
+$$
+
+
+\subsubsection{Property of Hamiltonian Monte Carlo}
+\begin{enumerate}
+    \item Reversible
+    \item Volume preserving
+    \item Conserves energy
+\end{enumerate}
+
+\subsubsection{HMC Algorithm}
+
+\subsubsection{Relation to blocked Gibbs sampling and MH algorithm}
+
+\subsection{Slice Sampling}
+
+\section{Bayesian Model Comparison}
+Recall that posterior:
+$$
+    P(\theta|\mathcal{D}, \mathcal{M}) = \frac{\mathcal{L}(\mathcal{D}|\theta, \mathcal{M}){\pi}(\theta|\mathcal{M})}{\mathcal{Z}}
+$$
+where $\mathcal{Z}$ is the evidence, which is the probability of the data averaged over all possible models.\\
+$$
+    \mathcal{Z} = \int \mathcal{L}(\mathcal{D}|\theta, \mathcal{M}){\pi}(\theta|\mathcal{M}) d\theta
+$$
+
+\subsection{Frequentist Approach}
+Given two models for the same data, $\mathcal{M}_1(\lambda_A)$ and $\mathcal{M}_2(\lambda_B)$, we want to know which model is better.\\
+The frequentist approach is to use the maximum likelihood ratio test:
+$$
+    MLR(Maximum\ Likelihood\ Ratio) = \frac{\mathcal{L}(\mathcal{D}|\lambda_A, \mathcal{M}_1)}{\mathcal{L}(\mathcal{D}|\lambda_B, \mathcal{M}_2)}
+$$
+
+\subsection{Baysian Approach}
+We use the posterior odds ratio for the same problem:\\
+\begin{definition}
+    {Posterior Odds Ratio}
+    {O_{A,B} = \frac{P(\mathcal{M}_1|\mathcal{D})}{P(\mathcal{M}_2|\mathcal{D})} = \frac{\mathcal{Z}_1}{\mathcal{Z}_2} \frac{\pi(\mathcal{M}_1)}{\pi(\mathcal{M}_2)}}
+    {We are updating the prior odds ratio with the Bayes factor into the posterior odds ratio.}
+\end{definition}
+\subsection{Example}
+
+\subsection{Occam Penalty}
+The ideal of Occam's razor is that the simplest model that fits the data is the best.\\
+\begin{theorem}
+    {Occam Penalty}
+    {Models that are more flexible (more complicated or more parameters that can take values spanning a wider range), have lower evidence.}
+\end{theorem}
+Baysian Inference incorporates the Occam penalty, which is the penalty for having more parameters.\\
+
+\subsection{Computation of Z}
+The computation of the evidence is important in the Baysian model comparison.Nonetheless, it is often difficult to compute.\\
+\subsubsection{Analytical Solution}
+An analytical solution is possible for some simple models, such as the Gaussian distribution.
+Given that in Baysian:
+$$
+    P(\mathcal{M}|\mathcal{D}) = \frac{\mathcal{L}(\mathcal{D}|\mathcal{M})\pi(\mathcal{M})}{\mathcal{Z}}
+$$
+If we know the analytical form of the likelihood and the prior, and hence the posterior, we can compute the evidence analytically.\\
+\subsubsection{Laplace Approximation}
+However, it is usually difficult to compute the evidence analytically. The Laplace approximation is a method to approximate the evidence.\\
+Given that evidence, $\mathcal{Z}$:
+\begin{align*}
+    \mathcal{Z} &= \int \mathcal{L}(\mathcal{D}|\theta, \mathcal{M}){\pi}(\theta|\mathcal{M}) d\theta\\
+    &= \int P^{*}(\theta|\mathcal{D}, \mathcal{M}) d\theta
+\end{align*}
+where $P^{*}(\mathcal{D}|\theta)$ is the unnormalised posterior.\\
+Now we can taylor expand the log likelihood around the maximum posterior:
+\begin{align*}
+    \log P^{*}(\theta|\mathcal{D}, \mathcal{M}) &\approx \log P^{*}(\theta_{max}|\mathcal{D}, \mathcal{M}) - \frac{1}{2}c(\theta - \theta_{max})^2
+\end{align*}
+where $c$ is the second derivative of the log likelihood at the maximum posterior.\\
+i.e.
+\begin{align*}
+    c =  -\frac{d^2}{d\theta^2} \log P^{*}(\theta|\mathcal{D}, \mathcal{M})|_{\theta_{max}}
+\end{align*}
+Taking exponential of both sides, we have:
+\begin{align*}
+    P^{*}(\mathcal{D}|\theta, \mathcal{M}) &\approx P^{*}(\mathcal{D}|\theta_{max}, \mathcal{M}) \exp\left(-\frac{1}{2}c(\theta - \theta_{max})^2\right)
+\end{align*}
+Therefore, such this to the integral, we have:
+\begin{align*}
+    \mathcal{Z} &\approx P^{*}(\mathcal{D}|\theta_{max}, \mathcal{M}) \int \exp\left(-\frac{1}{2}c(\theta - \theta_{max})^2\right) d\theta\\
+    &\approx P^{*}(\mathcal{D}|\theta_{max}, \mathcal{M}) \sqrt{\frac{2\pi}{c}}
+\end{align*}
+Hence, we change the nature of the problem from integrate to find the maximum likelihood and the evaluation of the second derivative of the log likelihood at maximum likelihood.\\
+
+Note that by changing the parameterisation of the model, the evidence will change.i.e. the evidence is not invariant under reparameterisation.\\
+$$
+    x \rightarrow \theta = f(x)
+$$
+
+In the case of multidimensional parameter space $\theta \in \mathbb{R}^{D} $
+
+$$
+    \log P^{*}(\mathcal{D}|\theta, \mathcal{M}) \approx \log P^{*}(\mathcal{D}|\theta_{max}, \mathcal{M}) - \frac{1}{2}(\theta - \theta_{max})^T \nabla^2 \log \mathcal{L}(\mathcal{D}|\theta, \mathcal{M})|_{\theta_{max}}(\theta - \theta_{max})+ ...
+$$
+where $\nabla^2 \log \mathcal{L}(\mathcal{D}|\theta, \mathcal{M})|_{\theta_{max}}$ is the Hessian matrix.\\
+and
+$$
+    \mathcal{Z} \approx P^{*}(\mathcal{D}|\theta_{max}, \mathcal{M}) \sqrt{\frac{(2\pi)^D}{\det |\nabla^2 \log \mathcal{L}(\mathcal{D}|\theta, \mathcal{M})|_{\theta_{max}}|}}
+$$
+
+If the posterior has more than one peak? 
+
+\subsubsection{Nested Sampling}
+Nested sampling is a method to compute the evidence. It is a method that is based on the idea of the prior volume.\\
+The prior volume is the volume of the prior space that is enclosed by the likelihood contour.\\
+
+???
+
+\subsubsection{Thermodynamic Integration}
+Thermodynamic integration is another method to compute the evidence.\\
+\begin{definition}
+    {Annealed likelihood}
+    {\mathcal{L}(\mathcal{D}|\theta, \mathcal{M})^{\beta} = \mathcal{L}(\mathcal{D}|\theta, \mathcal{M})^{\beta}}
+    {where $\beta$ is the inverse temperature, it gets the inspiration from the Boltzmann distribution, i.e. $\beta = 1/kT$}
+\end{definition}
+\begin{definition}
+    {Annealed posterior}
+    {\pi(\theta|\mathcal{D}, \mathcal{M})^{\beta} = \frac{\mathcal{L}(\mathcal{D}|\theta, \mathcal{M})^{\beta}{\pi}(\theta|\mathcal{M})}{\mathcal{Z}_{\beta}}}
+    {where $\mathcal{Z}^{\beta}$ is the evidence at the inverse temperature $\beta$, i.e. $\mathcal{Z}_{\beta} = \int \mathcal{L}(\mathcal{D}|\theta, \mathcal{M})^{\beta}{\pi}(\theta|\mathcal{M}) d\theta$}
+\end{definition}
+Note that at 
+\begin{enumerate}
+    \item $\beta = 0$, the annealed likelihood is flat: $\mathcal{Z}_{\beta} = 1$
+    \item $\beta = 1$, the annealed likelihood is the likelihood:
+\end{enumerate}
+Note this algebraic identity:
+\begin{align*}
+    \frac{d}{d\beta} \log \mathcal{Z}_{\beta} &= \frac{1}{\mathcal{Z}_{\beta}} \frac{d}{d\beta} \mathcal{Z}_{\beta}\\
+    &= \frac{1}{\mathcal{Z}_{\beta}} \frac{d}{d\beta} \int \mathcal{L}(\mathcal{D}|\theta, \mathcal{M})^{\beta}{\pi}(\theta|\mathcal{M}) d\theta\\
+    &= \frac{1}{\mathcal{Z}_{\beta}} \int \frac{d}{d\beta} \mathcal{L}(\mathcal{D}|\theta, \mathcal{M})^{\beta}{\pi}(\theta|\mathcal{M}) d\theta\\
+    &= \frac{1}{\mathcal{Z}_{\beta}}\int \log \mathcal{L}(\mathcal{D}|\theta, \mathcal{M}) \mathcal{L}(\mathcal{D}|\theta, \mathcal{M})^{\beta}{\pi}(\theta|\mathcal{M}) d\theta\\
+    &= \int \log \mathcal{L}(\mathcal{D}|\theta, \mathcal{M}) P(\theta|\mathcal{D}, \mathcal{M})^{\beta} d\theta\\
+    &= \langle \log \mathcal{L}(\mathcal{D}|\theta, \mathcal{M}) \rangle_{\beta}
+\end{align*}
+Numerically, the expected value can be approximated by the average over a large number of samples.\\
+$$
+    \log \mathcal{Z}_{1} - \log \mathcal{Z}_{0} = \int^1_0 \langle \log \mathcal{L}(\mathcal{D}|\theta, \mathcal{M}) \rangle_{\beta} d\beta
+$$
+where the integral can be approximated by the trapezoidal rule.\\
+\subsection{Savage-Dickey Density Ratio}
+Given that we are only interested in the evidence ratio, we can use the Savage-Dickey density ratio to compute the evidence ratio.\\
+$$
+    B_{1,2} = \frac{P(\theta|\mathcal{D}, \mathcal{M}_1)}{P(\theta|\mathcal{D}, \mathcal{M}_2)} = \frac{\mathcal{Z}_1}{\mathcal{Z}_2}
+$$
+Given two models, $\mathcal{M}_1$ and $\mathcal{M}_2$, where $\mathcal{M}_1$ is a sub-model of $\mathcal{M}_2$, i.e. $\mathcal{M}_1$ is a nested in $\mathcal{M}_2$.\\
+Suppose that $\mathcal{M}_1$ has a parameter $\epsilon$ and $\mathcal{M}_2$ has a parameter $\epsilon$ and additional parameters $\phi$, where $\epsilon \in \mathbb{R}$ and $\phi \in \mathbb{R}^D$.\\
+We note:
+\begin{align*}
+    \mathcal{L}(\mathcal{D}|\phi, \mathcal{M}_1) &= \mathcal{L}(\mathcal{D}|\phi, \mathcal{M}_2, \epsilon = 0) \\
+    \pi(\epsilon|\mathcal{M}_1) &= \pi(\epsilon|\mathcal{M}_2, \epsilon = 0)
+\end{align*}
+Then the evidence ratio is:
+\begin{align*}
+    {\mathcal{Z}_1} &= P(\mathcal{D}|\mathcal{M}_1)\\
+    &= \int \mathcal{L}(\mathcal{D}|\phi, \mathcal{M}_1) \pi(\phi|\mathcal{M}_1) d\phi\\
+    &= \int \mathcal{L}(\mathcal{D}|\phi, \mathcal{M}_2, \epsilon = 0) \pi(\phi|\mathcal{M}_2, \epsilon = 0) d\phi\\
+    &= P(\mathcal{D}|\mathcal{M}_2, \epsilon = 0)\\
+    &= \frac{P(\epsilon = 0|\mathcal{D}, \mathcal{M}_2)}{P(\epsilon = 0|\mathcal{M}_2)}P(\mathcal{D}|\mathcal{M}_2)\\
+    &= \frac{P(\epsilon = 0|\mathcal{D}, \mathcal{M}_2)}{P(\epsilon = 0|\mathcal{M}_2)}\mathcal{Z_2}\\
+\end{align*}
+Hence, the evidence ratio is:
+$$
+    B_{1,2} = \frac{P(\epsilon = 0|\mathcal{D}, \mathcal{M}_2)}{P(\epsilon = 0|\mathcal{M}_2)}
+$$
+which is just the ratio of the posterior density at $\epsilon = 0$ under $\mathcal{M}_2$ to the prior density at $\epsilon = 0$ under $\mathcal{M}_2$.\\
+It is independent of $\mathcal{M}_2$
+\end{document}

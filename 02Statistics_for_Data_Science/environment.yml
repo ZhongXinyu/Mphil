@@ -1,0 +1,16 @@
+name: Stats_coursework
+
+dependencies:
+  - python >= 3.11.6
+  - numpy
+  - pandas
+  - matplotlib
+  - seaborn
+  - scikit-learn
+  - iminuit
+  - ipykernel
+  - pytorch
+  - emcee
+  - corner
+  - zeus-mcmc
+  - pyarrow 

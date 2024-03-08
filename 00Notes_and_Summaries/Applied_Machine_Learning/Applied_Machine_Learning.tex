@@ -1,0 +1,32 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{import}
+\import{../Template/}{format.tex}
+
+\newcommand{\topic}{Applied Data Science}
+
+\begin{document}
+
+\title{\topic}
+\begin{titlepage}
+    \maketitle
+\end{titlepage}
+
+\tableofcontents
+
+\newpage
+\begin{abstract}
+\noindent
+\end{abstract}
+
+\section{Loss function of Neural Networks}
+
+\subsection{Loss Function}
+When training Neural Network, we try by minimising the loss function.
+By doing so we train a bunch of weights and biases that will be used to predict the distribution of Y, instead of training Y itself.
+\subsection{Univariate Regression}
+Univariate regression predicts a single value, and $y$ is a real number.
+The model predicts the $\theta$ (not $y$ itself), which are the parameters of the distribution of $y$. 
+To do so, we need to define a loss function helps us to determine the best $\theta$. This is done using the Maximum Likelihood Estimation (MLE).
+\subsection{Entropy Loss}
+\end{document}

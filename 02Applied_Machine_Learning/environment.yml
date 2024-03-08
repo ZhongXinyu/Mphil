@@ -1,0 +1,23 @@
+name: AML_coursework
+
+# channels:
+#   - defaults
+#   - conda-forge
+
+dependencies:
+  - python
+  - numpy==1.26.4
+  - pandas
+  - matplotlib
+  - seaborn
+  - scikit-learn
+  - ipykernel==6.29.2
+  - ipython==8.21.0
+  - pytorch
+  - requests
+  - torchvision
+  - numba
+  - tqdm==4.66.2
+  - jupyter
+  - accelerate
+  - pip
